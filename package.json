@@ -4,7 +4,10 @@
 	"private": true,
 	"description": "CodeLoud product family monorepo: Voice, Relay, Web, Shared.",
 	"type": "module",
-	"workspaces": ["Web", "Shared"],
+	"workspaces": [
+		"Web",
+		"Shared"
+	],
 	"scripts": {
 		"build:shared": "npm --prefix Shared run build",
 		"check:web": "npm --prefix Web run check",
@@ -13,6 +16,7 @@
 		"test:web": "npm --prefix Web run test",
 		"lint:web": "npm --prefix Web run lint",
 		"inspect:web": "npm --prefix Web run browser:inspect",
+		"check:relay-beta": "npm --prefix Web run browser:relay-beta",
 		"deploy:web": "npm --prefix Web run deploy",
 		"typecheck:voice": "npm --prefix Voice run check:root",
 		"build:voice": "npm --prefix Voice run build",

@@ -76,6 +76,7 @@ Keys carry scoped permissions (`public:read`, `workspace:read`, `evidence:read`,
 | Web dev server                       | `npm run dev:web`                                             |
 | Web deploy (codeloud.xyz)            | `npm run deploy:web`                                          |
 | Web browser inspection               | `npm run inspect:web`                                         |
+| Relay beta form browser check        | `npm run check:relay-beta`                                    |
 | Voice typecheck / build / unit tests | `npm run typecheck:voice` / `build:voice` / `test:voice:unit` |
 | Relay typecheck / build / tests      | `npm run typecheck:relay` / `build:relay` / `test:relay`      |
 

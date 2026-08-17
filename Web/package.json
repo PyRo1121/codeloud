@@ -15,7 +15,8 @@
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"deploy": "npm run build && npx wrangler deploy",
-		"browser:inspect": "node scripts/browser-inspect.mjs"
+		"browser:inspect": "node scripts/browser-inspect.mjs",
+		"browser:relay-beta": "node scripts/relay-beta-check.mjs"
 	},
 	"dependencies": {
 		"@codeloud/family": "file:../Shared",
