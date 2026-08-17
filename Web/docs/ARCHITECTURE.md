@@ -131,9 +131,18 @@ Production provisioning (2026-08-17):
 
 ## Next slices
 
-1. Deploy the Relay service to production: create the `relay.codeloud.xyz` DNS record, deploy the Relay worker with its production env (RELAY_AUTH_DB, TURNSTILE keys, rate-limit secret) so the beta application link resolves. The staging deployment (`relay-staging.codeloud.xyz`) already serves the full beta flow.
-2. Add the authenticated console and reuse Relay's Better Auth/API-key route only after the public interest path is verified.
-3. Browser inspection is implemented in `scripts/browser-inspect.mjs` (desktop/mobile/reduced-motion/WebGL-off/keyboard/form); extend it when new surfaces land.
+1. Add the authenticated console and reuse Relay's Better Auth/API-key route now that the public interest path and Relay production are verified.
+2. Extend the browser inspection (`scripts/browser-inspect.mjs`) as new surfaces land.
+
+## Relay production
+
+Relay is deployed to production at `relay.codeloud.xyz` (worker `relay-mcp-production`):
+
+- DNS (`relay.codeloud.xyz` A + AAAA, proxied) and the custom-domain route are live.
+- D1 `relay-auth-production` has all 20 migrations applied (ledger complete).
+- Four production queues (`relay-research-production`, `-dlq`, `relay-corpus-acquisition-production`, `relay-corpus-ranking-production`) are wired as producers/consumers.
+- Turnstile widget `relay-beta` (domain `relay.codeloud.xyz`, action `relay_beta_apply`) plus the `TURNSTILE_SECRET`, `RELAY_BETA_RATE_LIMIT_SECRET`, and `BETTER_AUTH_SECRET` worker secrets.
+- Verified live: landing page serves the beta form; a valid submission body without a Turnstile token fails closed with `403 application_verification_failed`; the status endpoint returns `received`; the MCP endpoint is auth-protected (401).
 
 ## Relay beta integration
 
