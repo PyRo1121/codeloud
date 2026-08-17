@@ -131,8 +131,12 @@ Production provisioning (2026-08-17):
 
 ## Next slices
 
-1. Add the authenticated console and reuse Relay's Better Auth/API-key route now that the public interest path and Relay production are verified.
+1. Full login + API-key verification on the Relay console (requires the sole account holder's credentials); then define the Voice key scopes (`voice:transcribe`, `voice:project-context`, `voice:receipts`) when Voice ships an authenticated service.
 2. Extend the browser inspection (`scripts/browser-inspect.mjs`) as new surfaces land.
+
+## Authenticated console
+
+The family console reuses Relay's live Better Auth surface — it is not recreated on this site. Relay serves `/login`, `/signup` (registration allowlisted to the account holder), and `/account` (API-key management through the Better Auth API-key plugin). The Web footer links to `https://relay.codeloud.xyz/account` (`rel="external"`). Verified in production: `/login` serves the form, `/account` redirects unauthenticated visitors to `/login` (303), and `/api/auth/get-session` returns `null` without a session.
 
 ## Relay production
 

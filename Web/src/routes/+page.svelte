@@ -323,7 +323,10 @@
 	</div>
 	<p>Voice improves what goes in. Relay improves what the agent can work from.</p>
 	<nav aria-label="Footer navigation">
-		<a href="#voice">Voice</a><a href="#relay">Relay</a><a href="#interest">Access</a>
+		<a href="#voice">Voice</a><a href="#relay">Relay</a><a href="#interest">Access</a><a
+			href="https://relay.codeloud.xyz/account"
+			rel="external noopener">Console</a
+		>
 	</nav>
 </footer>
 
