@@ -31,9 +31,15 @@
 	</div>
 	<div class="product-panel-footer">
 		<p>{content.technicalNote}</p>
-		<button type="button" onclick={() => onInterest(product.id)}
-			>{content.cta}<span aria-hidden="true">↗</span></button
-		>
+		{#if product.applyUrl}
+			<a class="product-cta" href={product.applyUrl} target="_blank" rel="external noopener"
+				>{content.cta}<span aria-hidden="true">↗</span></a
+			>
+		{:else}
+			<button type="button" onclick={() => onInterest(product.id)}
+				>{content.cta}<span aria-hidden="true">↗</span></button
+			>
+		{/if}
 	</div>
 </article>
 
@@ -80,6 +86,7 @@
 	}
 
 	.product-relay .mono-label,
+	.product-relay .product-panel-footer .product-cta,
 	.product-relay .product-panel-footer button {
 		color: var(--relay);
 	}
@@ -144,7 +151,8 @@
 		font-size: 0.75rem;
 	}
 
-	.product-panel-footer button {
+	.product-panel-footer button,
+	.product-panel-footer .product-cta {
 		border: 0;
 		border-bottom: 1px solid currentColor;
 		background: transparent;
@@ -152,10 +160,12 @@
 		cursor: pointer;
 		font-size: 0.82rem;
 		font-weight: 650;
+		text-decoration: none;
 		white-space: nowrap;
 	}
 
-	.product-panel-footer button span {
+	.product-panel-footer button span,
+	.product-panel-footer .product-cta span {
 		padding-left: 0.8rem;
 		font-size: 1.2rem;
 	}

@@ -18,6 +18,12 @@ export interface ProductDefinition {
 	readonly descriptor: string;
 	readonly promise: string;
 	readonly accent: "voice" | "relay";
+	/**
+	 * The canonical application URL for this product, when the product is
+	 * accepting applications through its own service (e.g., Relay's beta flow).
+	 * Absent when the product is not yet accepting applications (e.g., Voice).
+	 */
+	readonly applyUrl?: string;
 }
 
 /** The public product definitions. These are copy-level claims, not runtime capability discovery. */
@@ -38,6 +44,7 @@ export const PRODUCTS: readonly ProductDefinition[] = [
 		promise:
 			"Exact-version documentation, technical research, package review, and evidence in one focused connection.",
 		accent: "relay",
+		applyUrl: "https://relay.codeloud.xyz/#beta",
 	},
 ];
 

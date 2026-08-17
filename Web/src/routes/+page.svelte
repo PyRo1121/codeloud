@@ -161,8 +161,8 @@
 			<p class="mono-label">Product access</p>
 			<h2 id="interest-title">Start with the part of the handoff that feels most broken.</h2>
 			<p>
-				Voice is in private development. Relay is accepting private-beta applications. We are
-				measuring interest by product, not collecting a generic waitlist.
+				Voice is in private development. Relay is accepting private-beta applications on the Relay
+				service. Registering interest here is a signal, not an application.
 			</p>
 		</div>
 		<div class="interest-actions">
@@ -175,15 +175,16 @@
 				<small>Private development</small>
 				<b aria-hidden="true">↗</b>
 			</button>
-			<button
+			<a
 				class="interest-action interest-action-relay"
-				type="button"
-				onclick={() => requestInterest("relay")}
+				href={productFor("relay").applyUrl}
+				target="_blank"
+				rel="external noopener"
 			>
 				<span>Apply for Relay beta</span>
 				<small>Application reviewed by a person</small>
 				<b aria-hidden="true">↗</b>
-			</button>
+			</a>
 		</div>
 	</section>
 

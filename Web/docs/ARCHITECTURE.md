@@ -86,7 +86,7 @@ The page may describe Relay as an MCP server that consolidates exact-version doc
 
 ### Interest capture
 
-Product interest is a measurement and access signal. It is not a promise of beta access. Relay's existing application endpoint, Turnstile policy, D1 storage, retention, status-token, and reviewer flows remain authoritative for Relay beta applications and will be integrated rather than recreated here.
+Product interest is a measurement and access signal. It is not a promise of beta access. Relay's existing application endpoint, Turnstile policy, D1 storage, retention, status-token, and reviewer flows remain authoritative for Relay beta applications. The "Apply for Relay beta" CTAs on this site link to the Relay service's own application flow (`https://relay.codeloud.xyz/#beta`) rather than duplicating the form or proxying submissions; the interest form here is the measurement layer only.
 
 This public family site has a separate `codeloud_product_interest` table for product-interest measurement. It stores normalized contact information and the bounded workflow fields needed to understand Voice/Relay demand; it does not store audio, transcripts, source code, credentials, or Relay evidence. Turnstile server verification is required before the table is written. Missing binding, secret, hostname policy, or valid Siteverify response causes an unavailable result rather than a write.
 
@@ -131,9 +131,13 @@ Production provisioning (2026-08-17):
 
 ## Next slices
 
-1. Integrate the existing Relay beta endpoint through a typed, parsed Hono/SvelteKit boundary; do not add a second database schema.
+1. Deploy the Relay service to production: create the `relay.codeloud.xyz` DNS record, deploy the Relay worker with its production env (RELAY_AUTH_DB, TURNSTILE keys, rate-limit secret) so the beta application link resolves. The staging deployment (`relay-staging.codeloud.xyz`) already serves the full beta flow.
 2. Add the authenticated console and reuse Relay's Better Auth/API-key route only after the public interest path is verified.
-3. Add browser inspection at desktop/mobile widths, reduced motion, WebGL unavailable, keyboard navigation, and error/loading states.
+3. Browser inspection is implemented in `scripts/browser-inspect.mjs` (desktop/mobile/reduced-motion/WebGL-off/keyboard/form); extend it when new surfaces land.
+
+## Relay beta integration
+
+The "Apply for Relay beta" CTAs on the family page link to the Relay service's own application flow at `https://relay.codeloud.xyz/#beta` (a `rel="external"` link, typed through the shared `@codeloud/family` product catalog's `applyUrl`). The formal application — Turnstile verification with the `relay_beta_apply` action, rate limiting, status tokens, and human review — remains authoritative on the Relay service. This site does not duplicate the form or proxy submissions: a server-side proxy would collapse Relay's source-based rate limiting (its `cf-connecting-ip` pseudonym) and a cross-origin browser POST is blocked by CORS. The family interest form remains the measurement layer only. Voice has no `applyUrl` yet, so its CTA stays an in-page interest button.
 
 ## Standards audit
 

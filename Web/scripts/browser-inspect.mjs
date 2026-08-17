@@ -106,6 +106,18 @@ await chromium
 			if ((await turnstileWidget.count()) > 0) pass("Turnstile widget present");
 			else fail("Turnstile widget", "Missing .cf-turnstile element");
 
+			// Relay beta CTA links to the real Relay service flow
+			const relayCta = desktop.locator("a[href*='relay.codeloud.xyz']");
+			const relayCtaCount = await relayCta.count();
+			if (relayCtaCount >= 2)
+				pass(`Relay beta CTA links to Relay service (${relayCtaCount} links)`);
+			else fail("Relay beta CTA", `Expected 2+ relay links, got ${relayCtaCount}`);
+
+			// Voice CTA stays an in-page interest button (no external application yet)
+			const voiceButton = desktop.locator(".product-panel-footer button");
+			if ((await voiceButton.count()) > 0) pass("Voice CTA remains an interest button");
+			else fail("Voice CTA", "No voice interest button in product panel");
+
 			// No console errors
 			if (consoleErrors.length === 0) pass("No console errors");
 			else fail("Console errors", consoleErrors.join("; "));
