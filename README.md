@@ -32,19 +32,52 @@ delegates to them with `npm --prefix` and never hoists their dependencies.
 See each project's own docs for detail:
 `Web/docs/ARCHITECTURE.md`, `Voice/docs/`, `Relay/docs/`.
 
+## Relay MCP connection
+
+The production MCP server is hosted at `https://relay.codeloud.xyz/mcp` and
+authenticates with a personal access token minted from the console
+(`https://relay.codeloud.xyz/account` → API keys).
+
+- **Auth header**: `Authorization: Bearer relay_pat_…`
+- **Transport**: MCP streamable HTTP, modern protocol revision `2026-07-28`
+  (client SDKs handle the envelope + `Mcp-Method`/`Mcp-Name` headers
+  automatically — raw-HTTP callers must include `params._meta` with
+  `io.modelcontextprotocol/protocolVersion` and
+  `io.modelcontextprotocol/clientCapabilities`).
+- **Tools**: `resolve_and_docs` (bounded package documentation), `web_research`
+  (admitted-source research), `pre_install_review` (advisory npm trust
+  review), `get_evidence` (evidence excerpts), `get_job` (durable research
+  jobs).
+
+Example client config (Claude Code `.mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "relay": {
+      "url": "https://relay.codeloud.xyz/mcp",
+      "headers": { "Authorization": "Bearer <relay_pat_…>" }
+    }
+  }
+}
+```
+
+Keys carry scoped permissions (`public:read`, `workspace:read`, `evidence:read`,
+`jobs:read`, …) and can be revoked or rotated from the console at any time.
+
 ## Commands (run from this root)
 
-| Task | Command |
-|---|---|
-| Install (Web + Shared) | `npm install` |
-| Typecheck all | `npm run typecheck` |
-| Build all | `npm run build` |
-| Test all | `npm run test` |
-| Web dev server | `npm run dev:web` |
-| Web deploy (codeloud.xyz) | `npm run deploy:web` |
-| Web browser inspection | `npm run inspect:web` |
+| Task                                 | Command                                                       |
+| ------------------------------------ | ------------------------------------------------------------- |
+| Install (Web + Shared)               | `npm install`                                                 |
+| Typecheck all                        | `npm run typecheck`                                           |
+| Build all                            | `npm run build`                                               |
+| Test all                             | `npm run test`                                                |
+| Web dev server                       | `npm run dev:web`                                             |
+| Web deploy (codeloud.xyz)            | `npm run deploy:web`                                          |
+| Web browser inspection               | `npm run inspect:web`                                         |
 | Voice typecheck / build / unit tests | `npm run typecheck:voice` / `build:voice` / `test:voice:unit` |
-| Relay typecheck / build / tests | `npm run typecheck:relay` / `build:relay` / `test:relay` |
+| Relay typecheck / build / tests      | `npm run typecheck:relay` / `build:relay` / `test:relay`      |
 
 ## Shared package
 
