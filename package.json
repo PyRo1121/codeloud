@@ -1,0 +1,27 @@
+{
+	"name": "codeloud-family",
+	"version": "0.1.0",
+	"private": true,
+	"description": "CodeLoud product family monorepo: Voice, Relay, Web, Shared.",
+	"type": "module",
+	"workspaces": ["Web", "Shared"],
+	"scripts": {
+		"build:shared": "npm --prefix Shared run build",
+		"check:web": "npm --prefix Web run check",
+		"build:web": "npm run build:shared && npm --prefix Web run build",
+		"dev:web": "npm run build:shared && npm --prefix Web run dev",
+		"test:web": "npm --prefix Web run test",
+		"lint:web": "npm --prefix Web run lint",
+		"inspect:web": "npm --prefix Web run browser:inspect",
+		"deploy:web": "npm --prefix Web run deploy",
+		"typecheck:voice": "npm --prefix Voice run check:root",
+		"build:voice": "npm --prefix Voice run build",
+		"test:voice:unit": "npm --prefix Voice run test:unit",
+		"typecheck:relay": "npm --prefix Relay run typecheck",
+		"build:relay": "npm --prefix Relay run build",
+		"test:relay": "npm --prefix Relay run test",
+		"typecheck": "npm run typecheck:relay && npm run typecheck:voice && npm run check:web",
+		"build": "npm run build:relay && npm run build:voice && npm run build:web",
+		"test": "npm run test:relay && npm run test:voice:unit && npm run test:web"
+	}
+}

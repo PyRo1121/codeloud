@@ -1,0 +1,9 @@
+node_modules/
+.svelte-kit/
+.wrangler/
+dist/
+build/
+coverage/
+package-lock.json
+tools/oxlint/anti-slop/
+static/fonts/

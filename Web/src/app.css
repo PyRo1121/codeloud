@@ -1,0 +1,127 @@
+@font-face {
+	font-family: "Mona Sans Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 200 900;
+	src: url("/fonts/mona-sans-latin-standard-normal.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Commit Mono";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 400;
+	src: url("/fonts/commit-mono-latin-400-normal.woff2") format("woff2");
+}
+
+:root {
+	color-scheme: dark;
+	font-family: "Mona Sans Variable", ui-sans-serif, system-ui, sans-serif;
+	--bg: #0b0d0d;
+	--surface: #111515;
+	--surface-raised: #171c1c;
+	--text: #eeeae1;
+	--muted: #a4aba5;
+	--faint: #69736e;
+	--line: #29302e;
+	--line-strong: #46504b;
+	--voice: #73e0bf;
+	--relay: #ff6633;
+	--signal: #eeeae1;
+	--mono: "Commit Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+	--sans: "Mona Sans Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	min-width: 320px;
+	background: var(--bg);
+	scroll-behavior: smooth;
+}
+
+body {
+	margin: 0;
+	background:
+		radial-gradient(circle at 50% -10%, rgb(48 65 59 / 20%), transparent 33rem), var(--bg);
+	color: var(--text);
+	font-family: var(--sans);
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+	font: inherit;
+}
+
+a {
+	color: inherit;
+}
+
+button,
+a {
+	-webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+	background: var(--voice);
+	color: #07110e;
+}
+
+:focus-visible {
+	outline: 2px solid var(--voice);
+	outline-offset: 4px;
+}
+
+.turnstile-shell {
+	min-height: 4.5rem;
+	margin-bottom: 0.5rem;
+	overflow: hidden;
+}
+
+.turnstile-unavailable {
+	border: 1px solid var(--line);
+	padding: 0.8rem;
+	color: var(--muted);
+	font-family: var(--mono);
+	font-size: 0.68rem;
+}
+
+.page-shell {
+	width: min(1440px, calc(100% - 64px));
+	margin-inline: auto;
+}
+
+.mono-label {
+	font-family: var(--mono);
+	font-size: 0.68rem;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+	.page-shell {
+		width: min(100% - 32px, 1440px);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+	}
+}

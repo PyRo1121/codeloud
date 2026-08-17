@@ -1,0 +1,42 @@
+{
+	"$schema": "https://unpkg.com/wrangler@4.123.0/config-schema.json",
+	"name": "codeloud-family-site",
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"compatibility_date": "2026-08-15",
+	"compatibility_flags": ["nodejs_compat"],
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare",
+	},
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1,
+	},
+	"d1_databases": [
+		{
+			"binding": "CODELOUD_INTEREST_DB",
+			"database_name": "codeloud-family-interest",
+			"database_id": "e8154226-b335-42d6-ba04-c40840629156",
+		},
+	],
+	"workers_dev": false,
+	"routes": [
+		{
+			"pattern": "codeloud.xyz",
+			"custom_domain": true,
+		},
+	],
+	"vars": {
+		"CODELOUD_INTEREST_HOSTNAMES": "codeloud.xyz",
+		"TURNSTILE_SITE_KEY": "0x4AAAAAAESQJEws32hnSB2M",
+	},
+	"env": {
+		"local": {
+			"workers_dev": true,
+			"routes": [],
+			"vars": {
+				"CODELOUD_INTEREST_HOSTNAMES": "localhost,127.0.0.1",
+			},
+		},
+	},
+}

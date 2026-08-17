@@ -1,0 +1,144 @@
+# CodeLoud family site architecture
+
+**Status:** proposed and implemented in the first public-site slice  
+**Scope:** the public SvelteKit family experience in this repository  
+**Date:** 2026-08-15
+
+## Product boundary
+
+This repository is the public CodeLoud family site. It is not the Relay service and it is not the Voice desktop application.
+
+- CodeLoud Voice is the developer dictation product. The real Voice implementation and research live in `/home/pyro1121/Documents/Codeloud/Voice`.
+- CodeLoud Relay is the MCP product for exact-version documentation, technical research, package review, repository lineage, and evidence replay. The real Relay implementation and hosted Cloudflare boundary live in `/home/pyro1121/Documents/Codeloud/Relay`.
+
+This separation prevents the public site from duplicating Relay's existing auth, API-key, beta-application, Turnstile, D1, and MCP implementations.
+
+## Decisions
+
+### SvelteKit on Cloudflare
+
+The site uses SvelteKit 2 with Svelte 5 and `@sveltejs/adapter-cloudflare`. The official SvelteKit documentation says `adapter-cloudflare` supports SvelteKit applications on Cloudflare Workers and Pages, and exposes Cloudflare platform bindings during local development. The old `adapter-cloudflare-workers` path is deprecated.
+
+Sources:
+
+- SvelteKit Cloudflare adapter: <https://svelte.dev/docs/kit/adapter-cloudflare>
+- Cloudflare SvelteKit guide: <https://developers.cloudflare.com/workers/framework-guides/web-apps/sveltekit/>
+
+### Threlte for the signature visual
+
+The public page uses Threlte 8 and Three.js only for the optional interactive handoff field. Threlte documents a declarative, typed, reactive Svelte binding to Three.js. Its `Canvas` component owns the renderer/camera context; the current implementation uses a single canvas, `renderMode="on-demand"`, and a clamped device-pixel ratio to bound work.
+
+The 3D layer is explanatory decoration, not the information source. All product copy and workflow states remain in semantic HTML. A future implementation must provide a non-WebGL DOM/CSS fallback and a reduced-motion mode.
+
+Sources:
+
+- Threlte introduction: <https://threlte.xyz/docs/learn/getting-started/introduction/>
+- Threlte first scene: <https://threlte.xyz/docs/learn/getting-started/your-first-scene/>
+- Threlte Canvas API: <https://threlte.xyz/docs/reference/core/canvas/>
+- Three.js WebGL compatibility: <https://threejs.org/manual/en/webgl-compatibility-check.html>
+
+### UI primitives
+
+Bits UI was evaluated for accessible primitives but is not installed in the first public slice. Its current documentation describes unstyled Svelte 5 primitives with compound Dialog, Tabs, Accordion, and focus-management APIs. The marketing composition remains custom so it does not inherit a generic component-library visual language. If a future console needs those primitives, Bits UI remains an evaluated option.
+
+Sources:
+
+- Bits UI: <https://www.bits-ui.com/>
+- Bits UI Dialog: <https://bits-ui.com/docs/components/dialog>
+- Bits UI Tabs: <https://bits-ui.com/docs/components/tabs>
+- Bits UI Svelte 5 migration: <https://bits-ui.com/docs/migration-guide>
+
+### Motion and progressive enhancement
+
+Svelte's native `Spring`, `Tween`, and `prefersReducedMotion` APIs are preferred for local state animation. SvelteKit's `onNavigate` can integrate the browser View Transition API when supported. CSS scroll-driven timelines are optional enhancement only because MDN currently marks broad support as incomplete.
+
+Sources:
+
+- Svelte motion: <https://svelte.dev/docs/svelte/svelte-motion>
+- SvelteKit View Transitions: <https://svelte.dev/blog/view-transitions>
+- MDN View Transition API: <https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API>
+- MDN scroll-driven animations: <https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll-driven_animations>
+
+### Auth and API boundary
+
+The public site does not create a second auth or API-key system. The existing Relay Cloudflare service already mounts Better Auth, uses the Better Auth API-key and OAuth-provider plugins, and owns Relay's D1-backed hosted state. The site will link or call that boundary through a typed adapter in a later slice.
+
+Better Auth documents direct Hono mounting through the standard `Request`/`Response` boundary. The Better Auth API-key plugin documents expiration, permissions, rate limiting, metadata, multiple configurations, and user/organization references. The remote MCP authorization specification separately defines OAuth 2.1 protected-resource metadata and audience-bound bearer tokens; therefore a developer API key is not described as universal MCP OAuth compatibility.
+
+Sources:
+
+- Existing Relay auth implementation: `/home/pyro1121/Documents/Codeloud/Relay/cloudflare/src/auth.ts`
+- Existing Relay hosted server: `/home/pyro1121/Documents/Codeloud/Relay/cloudflare/src/hosted-server.ts`
+- Existing Relay beta HTTP boundary: `/home/pyro1121/Documents/Codeloud/Relay/cloudflare/src/beta-application-http.ts`
+- Better Auth Hono integration: <https://better-auth.com/docs/integrations/hono>
+- Better Auth API-key plugin: <https://better-auth.com/docs/plugins/api-key>
+- MCP authorization: <https://modelcontextprotocol.io/specification/latest/basic/authorization>
+
+## Product claims and non-claims
+
+### Voice
+
+The page may describe project-aware vocabulary, transcript review, bounded identifier correction, and controlled insertion because those capabilities are documented by the Voice project. The page must not claim universal local processing, zero retention, provider-side deletion, training exclusion, or universal latency. The Voice project currently uses external speech providers and provider retention/training policies are not uniform.
+
+### Relay
+
+The page may describe Relay as an MCP server that consolidates exact-version documentation, technical research, package review, repository lineage, and evidence replay. It should say Relay grounds the context available to an agent, not that it verifies the agent's final answer.
+
+### Interest capture
+
+Product interest is a measurement and access signal. It is not a promise of beta access. Relay's existing application endpoint, Turnstile policy, D1 storage, retention, status-token, and reviewer flows remain authoritative for Relay beta applications and will be integrated rather than recreated here.
+
+This public family site has a separate `codeloud_product_interest` table for product-interest measurement. It stores normalized contact information and the bounded workflow fields needed to understand Voice/Relay demand; it does not store audio, transcripts, source code, credentials, or Relay evidence. Turnstile server verification is required before the table is written. Missing binding, secret, hostname policy, or valid Siteverify response causes an unavailable result rather than a write.
+
+Sources:
+
+- Cloudflare Turnstile server validation: <https://developers.cloudflare.com/turnstile/get-started/server-side-validation/>
+- Cloudflare Turnstile client/form integration: <https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/>
+- SvelteKit form actions and progressive enhancement: <https://svelte.dev/docs/kit/form-actions>
+
+## Package provenance note
+
+The initial dependency selection was resolved against exact package versions on 2026-08-15 using Relay's bounded npm resolver and pre-install review. The review found verified npm registry signatures and, except for the Three.js case, verified npm provenance declarations; it did not download or independently verify tarball bytes. This is dependency-admission evidence, not a claim that the packages are risk-free.
+
+The first install audit found the SvelteKit 2 cookie dependency path below `cookie@0.7.0`, which is affected by GHSA-pxg6-pf52-xh8x/CVE-2024-47764. The advisory's fixed version is `0.7.0`; this site pins the compatible `cookie@0.7.2` through npm `overrides` and upgrades Wrangler to `4.123.0`, which removes the audit findings in the current lockfile. We will remove the override when the SvelteKit major line naturally owns a compatible fixed cookie range.
+
+Sources:
+
+- GitHub Advisory Database: <https://github.com/advisories/GHSA-pxg6-pf52-xh8x>
+- OSV advisory: <https://osv.dev/vulnerability/GHSA-pxg6-pf52-xh8x>
+- SvelteKit dependency discussion: <https://github.com/sveltejs/kit/issues/13388>
+
+Selected versions:
+
+- `@sveltejs/kit@2.70.2`
+- `svelte@5.56.9`
+- `@sveltejs/adapter-cloudflare@7.2.9`
+- `@sveltejs/vite-plugin-svelte@7.3.0`
+- `vite@8.2.1`
+- `@threlte/core@8.5.16`
+- `three@0.185.1`
+- self-hosted Mona Sans and Commit Mono font artifacts sourced from the existing CodeLoud public asset inventory
+
+The exact resolver returned evidence IDs for each reviewed npm package. The font files are self-hosted under `static/fonts/` so the page does not require a font CDN or a runtime font package. Source excerpts are not copied into this repository; the URLs above remain the durable citations.
+
+## Provisioned Cloudflare resources
+
+Production provisioning (2026-08-17):
+
+- D1 database `codeloud-family-interest` (region WNAM) bound as `CODELOUD_INTEREST_DB`; migration `migrations/0001_product_interest.sql` applied remotely, creating `codeloud_product_interest`.
+- Turnstile widget `codeloud-interest` (managed mode) restricted to `codeloud.xyz`; site key exposed as the `TURNSTILE_SITE_KEY` var, secret stored as the `TURNSTILE_SECRET` worker secret (and in local-only `.dev.vars`, gitignored).
+- Worker `codeloud-family-site` deployed with the D1 binding, vars, secret, and the `codeloud.xyz` custom-domain route. Verified live: `GET /` returns 200 with the site key and Turnstile script; form POSTs without a valid token fail closed with the unavailable action data; SvelteKit's origin CSRF check rejects header-less cross-site POSTs.
+
+## Next slices
+
+1. Integrate the existing Relay beta endpoint through a typed, parsed Hono/SvelteKit boundary; do not add a second database schema.
+2. Add the authenticated console and reuse Relay's Better Auth/API-key route only after the public interest path is verified.
+3. Add browser inspection at desktop/mobile widths, reduced motion, WebGL unavailable, keyboard navigation, and error/loading states.
+
+## Standards audit
+
+This slice follows the repository's global TypeScript and Svelte 5 requirements: strict compiler settings, parsed boundaries, runes (`$state`, `$derived`, `$props`, `$effect`/`#await`), modern event attributes, thin components, no legacy `class:` directives, no raw API payloads in components, and explicit resource/fallback handling.
+
+Boundary parsing uses Effect and Effect Schema with explicit typed error channels: the interest form decode, the branded `EmailAddress`, and the Turnstile siteverify response all parse through `Schema.decodeUnknown`, and expected failures are tagged errors (`InterestFormError`, `InterestVerificationError`, `InterestPersistenceError`) surfaced through SvelteKit `fail()` responses rather than exceptions. Domain and server modules are pure; the SvelteKit action is the imperative shell that runs the Effect and maps tagged errors to action data. Provider and database details are never exposed to the browser.
+
+Tooling matches the TypeScript engineering standard: `tsc --noEmit` and `svelte-check` for the compiler gate, type-aware ESLint (`recommendedTypeChecked`) with `@typescript-eslint`, oxlint with the local anti-slop ruleset, deterministic Prettier formatting, and focused Vitest coverage for the parser and the Turnstile/store boundary. A content security policy (nonce mode) restricts script/style/frame origins and allows only `challenges.cloudflare.com` for Turnstile.
