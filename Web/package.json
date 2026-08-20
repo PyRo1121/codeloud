@@ -30,7 +30,7 @@
 		"cookie": "0.7.2"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "5.20260815.1",
+		"@cloudflare/workers-types": "5.20260817.1",
 		"@eslint/js": "10.0.1",
 		"@oxlint/plugins": "1.78.0",
 		"@sveltejs/adapter-cloudflare": "7.2.9",
