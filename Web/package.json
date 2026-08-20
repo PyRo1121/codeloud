@@ -9,7 +9,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"lint": "oxlint --config oxlint.config.ts . && eslint . --max-warnings 0",
+		"lint": "svelte-kit sync && oxlint --config oxlint.config.ts . && eslint . --max-warnings 0",
 		"lint:oxlint": "oxlint --config oxlint.config.ts .",
 		"lint:eslint": "eslint . --max-warnings 0",
 		"format": "prettier --write .",
