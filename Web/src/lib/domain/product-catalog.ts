@@ -1,16 +1,14 @@
 /**
- * CodeLoud product family domain model.
+ * Public CodeLoud product catalog owned by the family Web application.
  *
- * This is the single source of truth for the public product catalog — the
- * identity, names, and status of each CodeLoud surface — shared by the family
- * Web site, the Voice apps, and the Relay MCP service. Copy-level claims live
- * here; runtime capability discovery does not.
+ * These are copy-level claims used to render the family site. Runtime
+ * capability discovery remains owned by each product.
  */
 
 /** The public CodeLoud products. */
 export type ProductId = "voice" | "relay";
 
-/** Product metadata used across the family surfaces. */
+/** Product metadata rendered by the family site. */
 export interface ProductDefinition {
 	readonly id: ProductId;
 	readonly name: string;
@@ -18,15 +16,11 @@ export interface ProductDefinition {
 	readonly descriptor: string;
 	readonly promise: string;
 	readonly accent: "voice" | "relay";
-	/**
-	 * The canonical application URL for this product, when the product is
-	 * accepting applications through its own service (e.g., Relay's beta flow).
-	 * Absent when the product is not yet accepting applications (e.g., Voice).
-	 */
+	/** The canonical application URL when the product accepts applications. */
 	readonly applyUrl?: string;
 }
 
-/** The public product definitions. These are copy-level claims, not runtime capability discovery. */
+/** The public product definitions rendered by the family site. */
 export const PRODUCTS: readonly ProductDefinition[] = [
 	{
 		id: "voice",
@@ -48,7 +42,7 @@ export const PRODUCTS: readonly ProductDefinition[] = [
 	},
 ];
 
-/** Resolve one product definition; missing definitions are a development defect. */
+/** Resolve one product definition; a missing definition is a development defect. */
 export function productFor(id: ProductId): ProductDefinition {
 	const product = PRODUCTS.find((candidate) => candidate.id === id);
 	if (!product) throw new Error(`Unknown CodeLoud product: ${id}`);

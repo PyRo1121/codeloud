@@ -150,7 +150,7 @@ Relay is deployed to production at `relay.codeloud.xyz` (worker `relay-mcp-produ
 
 ## Relay beta integration
 
-The "Apply for Relay beta" CTAs on the family page link to the Relay service's own application flow at `https://relay.codeloud.xyz/#beta` (a `rel="external"` link, typed through the shared `@codeloud/family` product catalog's `applyUrl`). The formal application — Turnstile verification with the `relay_beta_apply` action, rate limiting, status tokens, and human review — remains authoritative on the Relay service. This site does not duplicate the form or proxy submissions: a server-side proxy would collapse Relay's source-based rate limiting (its `cf-connecting-ip` pseudonym) and a cross-origin browser POST is blocked by CORS. The family interest form remains the measurement layer only. Voice has no `applyUrl` yet, so its CTA stays an in-page interest button.
+The "Apply for Relay beta" CTAs on the family page link to the Relay service's own application flow at `https://relay.codeloud.xyz/#beta` (a `rel="external"` link, typed through Web's product catalog `applyUrl`). The formal application — Turnstile verification with the `relay_beta_apply` action, rate limiting, status tokens, and human review — remains authoritative on the Relay service. This site does not duplicate the form or proxy submissions: a server-side proxy would collapse Relay's source-based rate limiting (its `cf-connecting-ip` pseudonym) and a cross-origin browser POST is blocked by CORS. The family interest form remains the measurement layer only. Voice has no `applyUrl` yet, so its CTA stays an in-page interest button.
 
 ## Standards audit
 

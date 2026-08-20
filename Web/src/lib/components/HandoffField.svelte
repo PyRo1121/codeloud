@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Canvas } from "@threlte/core";
 	import { prefersReducedMotion } from "svelte/motion";
-	import type { ProductId } from "@codeloud/family";
+	import type { ProductId } from "$lib/domain/product-catalog";
 	import HandoffScene from "./HandoffScene.svelte";
 
 	interface Props {

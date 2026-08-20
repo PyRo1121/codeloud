@@ -56,7 +56,10 @@ try {
 	// 3. Empty submit validation
 	await submitBtn.click();
 	await page.waitForTimeout(500);
-	const invalidFields = await form.locator(":invalid").count().catch(() => 0);
+	const invalidFields = await form
+		.locator(":invalid")
+		.count()
+		.catch(() => 0);
 	check("empty submit triggers validation", invalidFields > 0, `${invalidFields} invalid`);
 
 	// 4. Fill required fields
@@ -77,7 +80,10 @@ try {
 	// 5. Optional name/team live in a collapsed <details> — open and fill
 	const optionalDetails = form.locator("details.optional-fields");
 	if (await optionalDetails.count().catch(() => 0)) {
-		await optionalDetails.first().evaluate((el) => (el.open = true)).catch(() => {});
+		await optionalDetails
+			.first()
+			.evaluate((el) => (el.open = true))
+			.catch(() => {});
 		await form
 			.locator('input[name="name"]')
 			.fill("Browser Check")
@@ -100,14 +106,12 @@ try {
 	);
 
 	// 7. Check console errors — filter out CSS hacks and Turnstile noise
-	const fatal = consoleErrors.filter(
-		(e) => {
-			if (/favicon|turnstile|challenges\.cloudflare/i.test(e)) return false;
-			// "%c%d font-size:0;color:transparent NaN" — anti-bot obfuscation, not a real error
-			if (/font-size:0;color:transparent/i.test(e)) return false;
-			return true;
-		},
-	);
+	const fatal = consoleErrors.filter((e) => {
+		if (/favicon|turnstile|challenges\.cloudflare/i.test(e)) return false;
+		// "%c%d font-size:0;color:transparent NaN" — anti-bot obfuscation, not a real error
+		if (/font-size:0;color:transparent/i.test(e)) return false;
+		return true;
+	});
 	check("no unexpected console errors", fatal.length === 0, fatal.slice(0, 2).join(" | "));
 
 	// 8. Server-side: verify the API endpoint is alive (GET to check it's not 404)

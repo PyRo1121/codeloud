@@ -2,19 +2,22 @@
 	"name": "codeloud-family",
 	"version": "0.1.0",
 	"private": true,
-	"description": "CodeLoud product family monorepo: Voice, Relay, Web, Shared.",
+	"description": "CodeLoud family integration repository for Web, Voice, and Relay.",
 	"type": "module",
+	"packageManager": "npm@12.0.2",
+	"engines": {
+		"node": ">=22.22.2"
+	},
 	"workspaces": [
-		"Web",
-		"Shared"
+		"Web"
 	],
 	"scripts": {
-		"build:shared": "npm --prefix Shared run build",
 		"check:web": "npm --prefix Web run check",
-		"build:web": "npm run build:shared && npm --prefix Web run build",
-		"dev:web": "npm run build:shared && npm --prefix Web run dev",
+		"build:web": "npm --prefix Web run build",
+		"dev:web": "npm --prefix Web run dev",
 		"test:web": "npm --prefix Web run test",
 		"lint:web": "npm --prefix Web run lint",
+		"format:web": "npm --prefix Web run format:check",
 		"inspect:web": "npm --prefix Web run browser:inspect",
 		"check:relay-beta": "npm --prefix Web run browser:relay-beta",
 		"deploy:web": "npm --prefix Web run deploy",
@@ -24,8 +27,15 @@
 		"typecheck:relay": "npm --prefix Relay run typecheck",
 		"build:relay": "npm --prefix Relay run build",
 		"test:relay": "npm --prefix Relay run test",
-		"typecheck": "npm run typecheck:relay && npm run typecheck:voice && npm run check:web",
-		"build": "npm run build:relay && npm run build:voice && npm run build:web",
-		"test": "npm run test:relay && npm run test:voice:unit && npm run test:web"
+		"check:products": "npm run typecheck:relay && npm run typecheck:voice",
+		"typecheck": "npm run check:web",
+		"lint": "npm run lint:web",
+		"build": "npm run build:web",
+		"test": "npm run test:web",
+		"verify:web": "npm run format:web && npm run lint:web && npm run check:web && npm run test:web && npm run build:web"
+	},
+	"allowScripts": {
+		"esbuild": true,
+		"workerd": true
 	}
 }

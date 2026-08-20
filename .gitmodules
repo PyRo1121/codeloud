@@ -1,0 +1,6 @@
+[submodule "Relay"]
+	path = Relay
+	url = ../codeloud-relay.git
+[submodule "Voice"]
+	path = Voice
+	url = ../codeloud-voice.git

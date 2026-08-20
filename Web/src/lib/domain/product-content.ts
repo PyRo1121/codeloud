@@ -1,4 +1,4 @@
-import type { ProductId } from "@codeloud/family";
+import type { ProductId } from "$lib/domain/product-catalog";
 
 interface CapabilityLine {
 	readonly title: string;

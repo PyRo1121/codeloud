@@ -19,7 +19,6 @@
 		"browser:relay-beta": "node scripts/relay-beta-check.mjs"
 	},
 	"dependencies": {
-		"@codeloud/family": "file:../Shared",
 		"@effect/schema": "0.75.5",
 		"@threlte/core": "8.5.16",
 		"effect": "3.22.1",

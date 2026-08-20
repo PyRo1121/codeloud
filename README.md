@@ -1,55 +1,111 @@
-# CodeLoud family monorepo
+# CodeLoud family integration repository
 
 CodeLoud is a product family: **Voice** (developer dictation), **Relay** (MCP
-technical context), and the **Web** family site, with a **Shared** domain
-model. This repository is the single control surface for all three.
+technical context), and the **Web** family site. This repository is the pinned
+integration and public-site control surface for those independently released
+products.
 
-## Layout
+## Repository model
 
-```
+This is an umbrella repository rather than a single-package monorepo:
+
+```text
 Codeloud/
-├── package.json      # Root scripts: build/test/typecheck/deploy across the family
-├── Shared/           # @codeloud/family — product catalog + domain types (npm workspace)
-├── Web/              # codeloud-family-site — SvelteKit site at codeloud.xyz
-├── Voice/            # CodeLoud Voice — desktop/vscode/web/mcp apps (independent git repo)
-└── Relay/            # @relay-dev/mcp — Relay MCP server + Cloudflare service (independent git repo)
+├── package.json      # Web commands and explicit product delegates
+├── Web/              # Tracked SvelteKit family site at codeloud.xyz
+├── Voice/            # Pinned private Git submodule: codeloud-voice
+└── Relay/            # Pinned private Git submodule: codeloud-relay
 ```
 
-`Web` and `Shared` are npm workspaces managed from this root (`npm install`
-here installs both). `Voice` and `Relay` are independent repositories with
-their own histories, CI, lockfiles, and nested workspace layouts — the root
-delegates to them with `npm --prefix` and never hoists their dependencies.
+Voice and Relay keep their own histories, lockfiles, release processes, and CI.
+The root repository records the exact commit expected for each product. Web
+owns its product catalog under `Web/src/lib/domain/product-catalog.ts`; there is
+no package boundary until another repository has a real consumer contract.
 
-## Wiring
+The rationale and supporting primary sources are recorded in
+[`docs/research/repository-topology.md`](docs/research/repository-topology.md).
 
-- **Web** (codeloud.xyz) — SvelteKit site, deployed as the `codeloud-family-site`
-  Cloudflare Worker with a D1 interest table and Turnstile protection.
-- **Relay** (relay.codeloud.xyz) — MCP server for exact-version technical
-  context; also hosts the Relay beta application endpoint the Web site links to.
-- **Voice** — desktop (Electron), VS Code, and web apps plus a Voice MCP app;
-  consumes external speech providers.
+## Clone and initialize
 
-See each project's own docs for detail:
-`Web/docs/ARCHITECTURE.md`, `Voice/docs/`, `Relay/docs/`.
+Voice and Relay are private repositories, so Git must already be authenticated
+for the `PyRo1121` GitHub account.
+
+```bash
+git clone https://github.com/PyRo1121/codeloud.git
+cd codeloud
+git submodule update --init --recursive
+```
+
+A normal clone is sufficient for Web-only work. The submodule command checks
+out the exact Voice and Relay commits recorded by this repository.
+
+## Ownership and CI
+
+- Root CI owns Web linting, typechecking, tests, dependency audit, and build.
+- Voice CI owns Voice compiler, Python, coverage, packaging, and Electron gates.
+- Relay CI owns Relay compiler, coverage, package, evaluation, and conformance gates.
+- Root integration commands are explicit and are not duplicated in root CI.
+
+This separation keeps product pipelines authoritative while the Git submodule
+pointers provide a reproducible family integration state.
+
+## Commands
+
+Run these from the repository root:
+
+| Task | Command |
+| --- | --- |
+| Install Web | `npm ci` |
+| Verify Web completely | `npm run verify:web` |
+| Web dev server | `npm run dev:web` |
+| Web deploy | `npm run deploy:web` |
+| Web browser inspection | `npm run inspect:web` |
+| Relay beta browser check | `npm run check:relay-beta` |
+| Typecheck pinned products | `npm run check:products` |
+| Voice build / unit tests | `npm run build:voice` / `npm run test:voice:unit` |
+| Relay build / tests | `npm run build:relay` / `npm run test:relay` |
+
+Product commands require initialized submodules and dependencies installed in
+the relevant product repository:
+
+```bash
+npm --prefix Voice ci
+npm --prefix Relay ci
+```
+
+## Updating a product pointer
+
+Develop, commit, push, and verify a product change in its own repository first.
+Then update the family repository to that published commit:
+
+```bash
+git -C Relay fetch origin
+git -C Relay checkout <verified-relay-commit>
+git add Relay
+```
+
+Use the same process for Voice. Review the pointer change with
+`git diff --submodule=log`. Never point the family repository at a product
+commit that has not been pushed to its remote.
+
+## Product wiring
+
+- **Web** (`codeloud.xyz`) is a SvelteKit application deployed as the
+  `codeloud-family-site` Cloudflare Worker with D1 interest storage and
+  Turnstile protection.
+- **Relay** (`relay.codeloud.xyz`) is the authenticated MCP service and owns its
+  beta application, account, API-key, evidence, and research boundaries.
+- **Voice** owns the desktop, VS Code, web, and MCP application surfaces and
+  integrates with external speech providers.
+
+See `Web/docs/ARCHITECTURE.md`, `Voice/docs/`, and `Relay/docs/` for product-level
+details.
 
 ## Relay MCP connection
 
 The production MCP server is hosted at `https://relay.codeloud.xyz/mcp` and
-authenticates with a personal access token minted from the console
-(`https://relay.codeloud.xyz/account` → API keys).
-
-- **Auth header**: `Authorization: Bearer relay_pat_…`
-- **Transport**: MCP streamable HTTP, modern protocol revision `2026-07-28`
-  (client SDKs handle the envelope + `Mcp-Method`/`Mcp-Name` headers
-  automatically — raw-HTTP callers must include `params._meta` with
-  `io.modelcontextprotocol/protocolVersion` and
-  `io.modelcontextprotocol/clientCapabilities`).
-- **Tools**: `resolve_and_docs` (bounded package documentation), `web_research`
-  (admitted-source research), `pre_install_review` (advisory npm trust
-  review), `get_evidence` (evidence excerpts), `get_job` (durable research
-  jobs).
-
-Example client config (Claude Code `.mcp.json`):
+authenticates with a personal access token created in the Relay account console
+at `https://relay.codeloud.xyz/account`.
 
 ```json
 {
@@ -62,33 +118,4 @@ Example client config (Claude Code `.mcp.json`):
 }
 ```
 
-Keys carry scoped permissions (`public:read`, `workspace:read`, `evidence:read`,
-`jobs:read`, …) and can be revoked or rotated from the console at any time.
-
-## Commands (run from this root)
-
-| Task                                 | Command                                                       |
-| ------------------------------------ | ------------------------------------------------------------- |
-| Install (Web + Shared)               | `npm install`                                                 |
-| Typecheck all                        | `npm run typecheck`                                           |
-| Build all                            | `npm run build`                                               |
-| Test all                             | `npm run test`                                                |
-| Web dev server                       | `npm run dev:web`                                             |
-| Web deploy (codeloud.xyz)            | `npm run deploy:web`                                          |
-| Web browser inspection               | `npm run inspect:web`                                         |
-| Relay beta form browser check        | `npm run check:relay-beta`                                    |
-| Voice typecheck / build / unit tests | `npm run typecheck:voice` / `build:voice` / `test:voice:unit` |
-| Relay typecheck / build / tests      | `npm run typecheck:relay` / `build:relay` / `test:relay`      |
-
-## Shared package
-
-`Shared` ships `@codeloud/family`: the product catalog (`ProductId`,
-`ProductDefinition`, `PRODUCTS`, `productFor`). Web imports it as a built
-package (`dist/`); build it with `npm run build:shared` (Web's root build
-scripts do this automatically).
-
-## Git layout
-
-The root is a git repository that tracks `Web`, `Shared`, and the family
-config. `Voice/` and `Relay/` are gitignored because they are independently
-versioned repositories.
+Keys carry scoped permissions and can be revoked or rotated from the console.

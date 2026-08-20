@@ -1,7 +1,4 @@
 node_modules/
-Voice/
-Relay/
-Shared/dist/
 
 # Generated content-hash static assets
 Web/static/*.txt

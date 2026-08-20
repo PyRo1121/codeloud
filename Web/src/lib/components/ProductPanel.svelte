@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ProductContent } from "$lib/domain/product-content";
-	import type { ProductDefinition } from "@codeloud/family";
+	import type { ProductDefinition } from "$lib/domain/product-catalog";
 
 	interface Props {
 		readonly product: ProductDefinition;

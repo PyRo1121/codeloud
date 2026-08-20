@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { T, useTask } from "@threlte/core";
 	import { Spring } from "svelte/motion";
-	import type { ProductId } from "@codeloud/family";
+	import type { ProductId } from "$lib/domain/product-catalog";
 
 	interface Props {
 		readonly activeProduct: ProductId;

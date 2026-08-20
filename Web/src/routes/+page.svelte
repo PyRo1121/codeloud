@@ -6,7 +6,7 @@
 	import ProductPanel from "$lib/components/ProductPanel.svelte";
 	import { contentForProduct } from "$lib/domain/product-content";
 	import { INTEREST_SELECTIONS, type InterestSelection } from "$lib/domain/products";
-	import { PRODUCTS, productFor, type ProductId } from "@codeloud/family";
+	import { PRODUCTS, productFor, type ProductId } from "$lib/domain/product-catalog";
 	import type { PageProps } from "./$types";
 
 	let { data, form }: PageProps = $props();

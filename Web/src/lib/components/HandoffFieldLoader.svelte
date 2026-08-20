@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from "$app/environment";
 	import { prefersReducedMotion } from "svelte/motion";
-	import type { ProductId } from "@codeloud/family";
+	import type { ProductId } from "$lib/domain/product-catalog";
 
 	interface Props {
 		readonly activeProduct?: ProductId;
