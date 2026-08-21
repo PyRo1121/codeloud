@@ -20,9 +20,11 @@ Voice addresses correction work. Relay addresses fact-checking work.
 
 Opening copy:
 
-> **Stop babysitting your coding agent.**
+> **Fix what your agent heard. Verify what it found.**
 >
-> Spend less time correcting input and fact-checking context. Voice handles one. Relay handles the other.
+> Voice reviews developer intent. Relay returns exact-version, sourced technical context.
+
+The hero uses a full-width proof ledger rather than a conventional copy-and-product-card split. Voice and Relay remain visible together as failure → intervention → agent-ready result.
 
 ## Conversion
 

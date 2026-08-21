@@ -84,7 +84,7 @@ try {
 	else fail("Page title", desktopTitle);
 
 	const heading = await desktop.locator("h1").textContent();
-	if (heading?.includes("Stop babysitting your coding agent"))
+	if (heading?.includes("Fix what your agent heard. Verify what it found."))
 		pass("Hero states the central promise");
 	else fail("Hero promise", heading ?? "missing");
 
@@ -93,14 +93,16 @@ try {
 	if (ctaBox && ctaBox.y + ctaBox.height <= 800) pass("Primary CTA is visible above the fold");
 	else fail("Primary CTA", `box=${JSON.stringify(ctaBox)}`);
 
-	if ((await desktop.locator(".demo-shell").count()) === 1)
-		pass("Interactive product demo rendered");
-	else fail("Product demo", "Expected one .demo-shell");
+	const proofLedger = desktop.locator(".demo-shell");
+	if ((await proofLedger.count()) === 1) pass("Product proof ledger rendered");
+	else fail("Product proof", "Expected one .demo-shell");
 
-	await desktop.getByRole("tab", { name: "Relay" }).click();
-	const relayDemo = await desktop.locator(".demo-content").textContent();
-	if (relayDemo?.includes("wrangler@4.123.0")) pass("Relay demonstration switches in place");
-	else fail("Relay demonstration", relayDemo ?? "missing");
+	const proofText = await proofLedger.textContent();
+	if (proofText?.includes("RelayClient") && proofText.includes("wrangler@4.123.0")) {
+		pass("Voice and Relay proof remain visible together");
+	} else {
+		fail("Product proof", proofText ?? "missing");
+	}
 
 	if ((await desktop.locator("article.product").count()) === 2)
 		pass("Voice and Relay are both explained");

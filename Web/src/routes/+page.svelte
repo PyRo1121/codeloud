@@ -38,22 +38,20 @@
 <main>
 	<section class="hero page-shell" aria-labelledby="hero-title">
 		<div class="hero-copy">
-			<p class="hero-mark"><span>CODE</span><b>/</b><span>LOUD</span></p>
-			<h1 id="hero-title">Stop babysitting your coding agent.</h1>
-			<p class="hero-subtitle">
-				Spend less time correcting input and fact-checking context. Voice handles one. Relay handles
-				the other.
-			</p>
-			<div class="hero-actions">
-				<a class="primary-action" href={resolve("/early-access")}
-					><span>Request early access</span><b aria-hidden="true">↗</b></a
-				>
-				<a class="secondary-action" href="#products">See how it works <span>↓</span></a>
+			<h1 id="hero-title">Fix what your agent heard. Verify what it found.</h1>
+			<div class="hero-intro">
+				<p>
+					Voice reviews developer intent. Relay returns exact-version, sourced technical context.
+				</p>
+				<div class="hero-actions">
+					<a class="primary-action" href={resolve("/early-access")}
+						><span>Request early access</span><b aria-hidden="true">↗</b></a
+					>
+					<a class="secondary-action" href="#products">Product details <span>↓</span></a>
+				</div>
 			</div>
 		</div>
-		<div class="hero-demo">
-			<FamilyDemo />
-		</div>
+		<FamilyDemo />
 	</section>
 
 	<section id="products" class="products page-shell" aria-labelledby="products-title">
@@ -131,43 +129,33 @@
 <style>
 	.hero {
 		display: grid;
-		grid-template-columns: minmax(0, 0.95fr) minmax(29rem, 1.05fr);
-		gap: clamp(3rem, 7vw, 7rem);
-		align-items: center;
+		align-content: center;
+		gap: clamp(2rem, 4vw, 3.25rem);
 		min-height: calc(100dvh - 5.25rem);
-		padding-block: 3.5rem 4.5rem;
+		padding-block: 2.75rem 3.5rem;
 	}
 
-	.hero-mark {
-		display: flex;
-		gap: 0.25rem;
-		align-items: center;
-		margin: 0 0 1.5rem;
-		font-family: var(--mono);
-		font-size: 0.66rem;
-		letter-spacing: 0.08em;
-	}
-
-	.hero-mark b {
-		color: var(--accent);
-		font-size: 1rem;
+	.hero-copy {
+		display: grid;
+		grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+		gap: clamp(2rem, 7vw, 7rem);
+		align-items: end;
 	}
 
 	h1 {
-		max-width: 12ch;
 		margin: 0;
-		font-size: clamp(3.4rem, 4.7vw, 5rem);
+		font-size: clamp(3rem, 3.7vw, 4rem);
 		font-weight: 660;
-		line-height: 0.94;
-		letter-spacing: -0.07em;
+		line-height: 0.92;
+		letter-spacing: -0.065em;
 		text-wrap: balance;
 	}
 
-	.hero-subtitle {
-		max-width: 47ch;
-		margin: 1.6rem 0 0;
+	.hero-intro > p {
+		max-width: 40ch;
+		margin: 0;
 		color: var(--muted);
-		font-size: clamp(1rem, 1.4vw, 1.2rem);
+		font-size: clamp(0.95rem, 1.2vw, 1.1rem);
 	}
 
 	.hero-actions,
@@ -179,43 +167,37 @@
 	}
 
 	.hero-actions {
-		margin-top: 2rem;
+		margin-top: 1.5rem;
 	}
 
 	.primary-action {
 		display: inline-flex;
-		gap: 0.9rem;
+		gap: 1rem;
 		align-items: center;
-		border-radius: 0.7rem;
-		background: var(--text);
-		padding: 0.35rem 0.4rem 0.35rem 1rem;
-		color: var(--bg);
-		font-size: 0.78rem;
-		font-weight: 720;
+		border: 1px solid var(--accent);
+		background: var(--accent);
+		padding: 0.72rem 0.85rem 0.72rem 1rem;
+		color: #111;
+		font-size: 0.76rem;
+		font-weight: 740;
 		text-decoration: none;
 		transition:
-			background 220ms cubic-bezier(0.16, 1, 0.3, 1),
-			transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+			background 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	.primary-action b {
-		display: grid;
-		width: 2rem;
-		height: 2rem;
-		place-items: center;
-		border-radius: 0.45rem;
-		background: var(--accent);
-		color: #111;
-		font-size: 1rem;
-		transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+		font-size: 0.95rem;
+		transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	.primary-action:hover {
-		background: var(--accent);
+		background: transparent;
+		color: var(--text);
 	}
 
 	.primary-action:hover b {
-		background: var(--text);
 		transform: translate(2px, -2px);
 	}
 
@@ -224,10 +206,10 @@
 	}
 
 	.secondary-action {
-		padding: 0.7rem 0.5rem;
+		padding: 0.7rem 0.25rem;
 		color: var(--muted);
 		font-family: var(--mono);
-		font-size: 0.67rem;
+		font-size: 0.64rem;
 		text-decoration: none;
 	}
 
@@ -409,12 +391,12 @@
 
 	@media (max-width: 960px) {
 		.hero {
-			grid-template-columns: 1fr;
 			min-height: auto;
 		}
 
 		.hero-copy {
-			max-width: 44rem;
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
 		}
 	}
 
@@ -424,7 +406,9 @@
 		}
 
 		h1 {
-			font-size: clamp(3.1rem, 14vw, 4.5rem);
+			max-width: 16ch;
+			font-size: clamp(2.55rem, 11vw, 3.6rem);
+			line-height: 0.96;
 		}
 
 		.product-pair,
