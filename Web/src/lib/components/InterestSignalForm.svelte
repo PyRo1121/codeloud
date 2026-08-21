@@ -84,8 +84,8 @@
 
 	<button type="submit" disabled={!siteKey}>Send no-contact signal <span>→</span></button>
 	<p class="privacy-note">
-		No email or account. We retain only a daily aggregate of these choices—not your IP address, user
-		agent, or an individual event row.
+		No email or account. We retain only a daily aggregate of these choices; not your IP address,
+		user agent, or an individual event row.
 	</p>
 </form>
 
@@ -97,8 +97,11 @@
 	}
 
 	.signal-form {
-		border-top: 3px solid var(--text);
-		padding-top: 1rem;
+		border: 1px solid var(--line);
+		border-radius: 1rem;
+		background: var(--surface);
+		padding: clamp(1rem, 3vw, 1.5rem);
+		box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%);
 	}
 
 	.signal-form fieldset {
@@ -139,14 +142,15 @@
 		align-items: center;
 		min-height: 3.2rem;
 		border: 1px solid var(--line-strong);
+		border-radius: 0.55rem;
 		padding: 0.75rem 0.9rem;
 		background: var(--surface-raised);
 		color: var(--muted);
 		transition:
-			border-color 160ms ease,
-			color 160ms ease,
-			background 160ms ease,
-			transform 160ms ease;
+			border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			background 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	label:hover span {
@@ -182,14 +186,15 @@
 		display: flex;
 		justify-content: space-between;
 		border: 0;
+		border-radius: 0.65rem;
 		padding: 1rem 1.1rem;
 		background: var(--text);
 		color: var(--bg);
 		font-weight: 750;
 		cursor: pointer;
 		transition:
-			background 160ms ease,
-			transform 160ms ease;
+			background 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	button:hover:not(:disabled) {

@@ -112,7 +112,7 @@
 	{/if}
 
 	<button class="submit" type="submit">
-		Request early-access contact <span aria-hidden="true">→</span>
+		Request early access <span aria-hidden="true">→</span>
 	</button>
 </form>
 
@@ -120,8 +120,11 @@
 	.contact-form {
 		display: grid;
 		gap: 1rem;
-		border-top: 3px solid var(--text);
-		padding-top: 1rem;
+		border: 1px solid var(--line);
+		border-radius: 1rem;
+		background: var(--surface);
+		padding: clamp(1rem, 3vw, 1.5rem);
+		box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%);
 	}
 
 	.product-choice,
@@ -137,6 +140,7 @@
 
 	.product-choice button {
 		border: 1px solid var(--line-strong);
+		border-radius: 0.6rem;
 		background: transparent;
 		padding: 0.85rem;
 		color: var(--muted);
@@ -145,9 +149,9 @@
 		font-size: 0.67rem;
 		text-align: left;
 		transition:
-			background 160ms ease,
-			color 160ms ease,
-			transform 160ms ease;
+			background 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	.product-choice button:hover,
@@ -173,7 +177,7 @@
 	select {
 		width: 100%;
 		border: 1px solid var(--line-strong);
-		border-radius: 0;
+		border-radius: 0.55rem;
 		background: var(--surface-raised);
 		padding: 0.8rem;
 		color: var(--text);
@@ -229,14 +233,15 @@
 		align-items: center;
 		justify-content: space-between;
 		border: 0;
+		border-radius: 0.65rem;
 		background: var(--text);
 		padding: 1rem 1.1rem;
 		color: var(--bg);
 		cursor: pointer;
 		font-weight: 720;
 		transition:
-			background 160ms ease,
-			transform 160ms ease;
+			background 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	.submit:hover {

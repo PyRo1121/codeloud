@@ -4,10 +4,12 @@
 
 <footer class="site-footer page-shell">
 	<a class="footer-mark" href={resolve("/")}>CODE<span>/</span>LOUD</a>
-	<p>Developer input and technical evidence, with the uncertain parts left visible.</p>
+	<p>Spend less time correcting and fact-checking your coding agent.</p>
 	<nav aria-label="Footer navigation">
 		<a href={resolve("/voice")}>Voice</a>
 		<a href={resolve("/relay")}>Relay</a>
+		<a href={resolve("/early-access")}>Early access</a>
+		<a href={resolve("/signal")}>Shape the roadmap</a>
 		<a href={resolve("/privacy")}>Privacy</a>
 		<a href="https://relay.codeloud.xyz/account" rel="external noopener">Console ↗</a>
 	</nav>

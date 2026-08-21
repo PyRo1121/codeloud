@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
 
-	type ActivePage = "home" | "voice" | "relay" | "privacy";
+	type ActivePage = "home" | "voice" | "relay" | "privacy" | "early-access" | "signal";
 
 	interface Props {
 		readonly active?: ActivePage;
@@ -20,8 +20,9 @@
 		<a class={active === "relay" ? "active" : ""} href={resolve("/relay")}>Relay</a>
 		<a class={active === "privacy" ? "active" : ""} href={resolve("/privacy")}>Privacy</a>
 	</nav>
-	<a class="signal-link" href={active === "home" ? "#signal" : resolve("/#signal")}
-		>Send a signal <span aria-hidden="true">↘</span></a
+	<a
+		class={`signal-link ${active === "early-access" ? "active" : ""}`}
+		href={resolve("/early-access")}>Request early access <span aria-hidden="true">↗</span></a
 	>
 </header>
 
@@ -30,7 +31,7 @@
 		display: grid;
 		grid-template-columns: 1fr auto 1fr;
 		align-items: center;
-		min-height: 5.25rem;
+		min-height: 4.5rem;
 		border-bottom: 1px solid var(--line);
 	}
 
@@ -113,7 +114,24 @@
 
 	.signal-link {
 		justify-self: end;
+		border: 1px solid var(--line-strong);
+		border-radius: 0.55rem;
+		padding: 0.55rem 0.7rem;
 		color: var(--text);
+		transition:
+			border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			background 180ms cubic-bezier(0.16, 1, 0.3, 1),
+			transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.signal-link:hover,
+	.signal-link.active {
+		border-color: var(--accent);
+		background: var(--accent-soft);
+	}
+
+	.signal-link:active {
+		transform: translateY(1px);
 	}
 
 	.signal-link span {

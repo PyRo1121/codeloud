@@ -17,19 +17,19 @@
 :root {
 	color-scheme: dark;
 	font-family: "Mona Sans Variable", ui-sans-serif, system-ui, sans-serif;
-	--bg: #0d0e0c;
-	--paper-raised: #151612;
-	--surface: #171814;
-	--surface-raised: #1b1c18;
-	--text: #f0ede4;
-	--muted: #a09e95;
-	--faint: #72756d;
-	--line: #292b26;
-	--line-strong: #4a4d45;
-	--accent: #ff5a36;
-	--accent-soft: #342019;
-	--positive: #75b9a6;
-	--ink-shadow: #050605;
+	--bg: #090a0c;
+	--paper-raised: #111318;
+	--surface: #111318;
+	--surface-raised: #171a20;
+	--text: #f4f5f0;
+	--muted: #9a9fa8;
+	--faint: #6f7580;
+	--line: #242832;
+	--line-strong: #3b414d;
+	--accent: #ff5438;
+	--accent-soft: #3a1b17;
+	--positive: #83c8b2;
+	--ink-shadow: #050608;
 	--voice: var(--accent);
 	--relay: var(--accent);
 	--signal: var(--text);
@@ -50,9 +50,7 @@ html {
 body {
 	min-height: 100vh;
 	margin: 0;
-	background:
-		radial-gradient(circle at 1px 1px, rgb(240 237 228 / 5%) 1px, transparent 0) 0 0 / 24px 24px,
-		var(--bg);
+	background: var(--bg);
 	color: var(--text);
 	font-family: var(--sans);
 	line-height: 1.5;
@@ -101,7 +99,7 @@ a {
 }
 
 .page-shell {
-	width: min(1280px, calc(100% - 64px));
+	width: min(1240px, calc(100% - 64px));
 	margin-inline: auto;
 }
 
@@ -114,7 +112,7 @@ a {
 
 @media (max-width: 760px) {
 	.page-shell {
-		width: min(100% - 32px, 1280px);
+		width: min(100% - 32px, 1240px);
 	}
 }
 

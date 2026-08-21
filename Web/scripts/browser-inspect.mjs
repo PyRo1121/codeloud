@@ -48,7 +48,7 @@ async function takeScreenshot(page, name) {
 }
 
 async function inspectLayout(page, label) {
-	for (const path of ["/", "/voice", "/relay", "/privacy"]) {
+	for (const path of ["/", "/voice", "/relay", "/privacy", "/early-access", "/signal"]) {
 		const response = await page.goto(`${SITE_URL}${path}`, { waitUntil: "domcontentloaded" });
 		const layout = await page.evaluate(() => ({
 			hasHeading: Boolean(document.querySelector("h1")),
@@ -64,43 +64,57 @@ async function inspectLayout(page, label) {
 
 const browser = await chromium.launch({ executablePath: CHROMIUM_PATH });
 try {
-	report("\nDesktop (1280×800):");
+	report("\nHomepage (1280×800):");
 	const desktop = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 	const consoleErrors = [];
 	desktop.on("console", (message) => {
-		if (message.type() === "error" && !isTurnstileNoise(message.text())) {
+		const source = message.location().url;
+		if (
+			message.type() === "error" &&
+			!isTurnstileNoise(message.text()) &&
+			!isTurnstileNoise(source)
+		) {
 			consoleErrors.push(message.text());
 		}
 	});
 	await desktop.goto(SITE_URL, { waitUntil: "domcontentloaded" });
 
 	const desktopTitle = await desktop.title();
-	if (desktopTitle.includes("CodeLoud")) pass("Page title includes CodeLoud");
+	if (desktopTitle.includes("Stop Correcting")) pass("Page title states the customer outcome");
 	else fail("Page title", desktopTitle);
 
-	if ((await desktop.locator(".handoff-record").count()) === 1) {
-		pass("Semantic handoff record rendered");
+	const heading = await desktop.locator("h1").textContent();
+	if (heading?.includes("Stop babysitting your coding agent"))
+		pass("Hero states the central promise");
+	else fail("Hero promise", heading ?? "missing");
+
+	const primaryCta = desktop.locator(".hero .primary-action");
+	const ctaBox = await primaryCta.boundingBox();
+	if (ctaBox && ctaBox.y + ctaBox.height <= 800) pass("Primary CTA is visible above the fold");
+	else fail("Primary CTA", `box=${JSON.stringify(ctaBox)}`);
+
+	if ((await desktop.locator(".demo-shell").count()) === 1)
+		pass("Interactive product demo rendered");
+	else fail("Product demo", "Expected one .demo-shell");
+
+	await desktop.getByRole("tab", { name: "Relay" }).click();
+	const relayDemo = await desktop.locator(".demo-content").textContent();
+	if (relayDemo?.includes("wrangler@4.123.0")) pass("Relay demonstration switches in place");
+	else fail("Relay demonstration", relayDemo ?? "missing");
+
+	if ((await desktop.locator("article.product").count()) === 2)
+		pass("Voice and Relay are both explained");
+	else fail("Product explanations", "Expected two product articles");
+
+	if ((await desktop.locator(".cf-turnstile").count()) === 0) {
+		pass("Sales homepage contains no form or Turnstile interruption");
 	} else {
-		fail("Handoff record", "Expected one .handoff-record");
+		fail("Homepage forms", "Turnstile should live on dedicated routes");
 	}
 
-	const panels = desktop.locator("article.product-panel");
-	if ((await panels.count()) === 2) pass("Two product briefs rendered");
-	else fail("Product briefs", `Expected 2, got ${await panels.count()}`);
-
-	const widgets = desktop.locator(".cf-turnstile");
-	if ((await widgets.count()) === 2) pass("Both Turnstile widgets rendered");
-	else fail("Turnstile widgets", `Expected 2, got ${await widgets.count()}`);
-
-	const relayLinks = desktop.locator("a[href*='relay.codeloud.xyz']");
-	if ((await relayLinks.count()) >= 2) pass("Relay links use the real service boundary");
-	else fail("Relay links", `Expected 2+, got ${await relayLinks.count()}`);
-
-	const voiceButton = desktop.locator(".product-voice .product-footer button");
-	await voiceButton.click();
-	const selectedProduct = await desktop.locator("input[name='product']").inputValue();
-	if (selectedProduct === "voice") pass("Voice CTA selects Voice in the contact form");
-	else fail("Voice CTA", `Expected voice, got ${selectedProduct}`);
+	const desktopHeight = await desktop.evaluate(() => document.documentElement.scrollHeight);
+	if (desktopHeight < 3200) pass(`Homepage remains compact (${desktopHeight}px)`);
+	else fail("Homepage length", `${desktopHeight}px`);
 
 	if (consoleErrors.length === 0) pass("No application console errors");
 	else fail("Console errors", consoleErrors.join("; "));
@@ -114,55 +128,39 @@ try {
 	if (!(await mobile.locator("header.site-header nav").isVisible()))
 		pass("Primary nav condenses on mobile");
 	else fail("Mobile navigation", "Desktop navigation remains visible");
+	const mobileHeight = await mobile.evaluate(() => document.documentElement.scrollHeight);
+	if (mobileHeight < 5200) pass(`Mobile homepage remains bounded (${mobileHeight}px)`);
+	else fail("Mobile homepage length", `${mobileHeight}px`);
 	await takeScreenshot(mobile, "mobile-full");
 	await mobile.close();
-
-	report("\nReduced motion:");
-	const reduced = await browser.newPage({
-		viewport: { width: 1280, height: 800 },
-		reducedMotion: "reduce",
-	});
-	await reduced.goto(SITE_URL, { waitUntil: "domcontentloaded" });
-	if ((await reduced.locator(".handoff-record").count()) === 1) {
-		pass("Core visual remains available without motion");
-	} else {
-		fail("Reduced motion", "Handoff record missing");
-	}
-	await reduced.close();
 
 	report("\nKeyboard navigation:");
 	const keyboard = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 	await keyboard.goto(SITE_URL, { waitUntil: "domcontentloaded" });
 	await keyboard.keyboard.press("Tab");
-	const focused = await keyboard.evaluate(() => {
-		const active = document.activeElement;
-		return active instanceof HTMLElement ? active.tagName : "";
-	});
+	const focused = await keyboard.evaluate(() => document.activeElement?.tagName ?? "");
 	if (focused === "A") pass("First navigation target is keyboard reachable");
 	else fail("Keyboard navigation", `Expected A, got ${focused}`);
 	await keyboard.close();
 
-	report("\nContact form:");
+	report("\nDedicated early-access route:");
 	const formPage = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-	await formPage.goto(SITE_URL, { waitUntil: "domcontentloaded" });
-	await formPage.locator("details summary").click();
+	await formPage.goto(`${SITE_URL}/early-access?product=voice`, { waitUntil: "domcontentloaded" });
+	const contactWidget = formPage.locator(".cf-turnstile[data-action='codeloud_interest']");
+	if ((await contactWidget.count()) === 1) pass("Contact Turnstile action is isolated");
+	else fail("Contact Turnstile", `Expected one, got ${await contactWidget.count()}`);
+	if ((await formPage.locator("input[name='product']").inputValue()) === "voice") {
+		pass("Product query preselects Voice");
+	} else {
+		fail("Product preselection", "Voice was not selected");
+	}
 	await formPage.locator("input[name='email']").fill("browser-inspect@example.com");
-	await formPage.locator("input[name='name']").fill("Browser Inspection");
 	await formPage
 		.locator("textarea[name='workflow']")
-		.fill("Automated browser inspection of the early-access form.");
+		.fill("Automated early-access form inspection.");
 	await formPage.locator("input[name='privacyConsent']").check();
-	const choices = formPage.locator(".product-choice button");
-	if ((await choices.count()) === 3) pass("Three contact product choices rendered");
-	else fail("Contact choices", `Expected 3, got ${await choices.count()}`);
-	await choices.nth(2).click();
-
-	const submitButton = formPage.locator("button.submit");
-	if ((await submitButton.count()) === 1) pass("Contact submit button rendered");
-	else fail("Contact submit button", "Missing");
-	await submitButton.click();
+	await formPage.locator("button.submit").click();
 	await formPage.waitForTimeout(2500);
-
 	const successVisible = await formPage
 		.locator(".result-success")
 		.isVisible()
@@ -185,8 +183,27 @@ try {
 			fail("Test cleanup", "Could not remove the browser-test row");
 		}
 	}
-	await takeScreenshot(formPage, "form-submission");
+	await takeScreenshot(formPage, "early-access");
 	await formPage.close();
+
+	report("\nDedicated roadmap-signal route:");
+	const signalPage = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+	await signalPage.goto(`${SITE_URL}/signal`, { waitUntil: "domcontentloaded" });
+	const signalWidget = signalPage.locator(".cf-turnstile[data-action='codeloud_signal']");
+	if ((await signalWidget.count()) === 1) pass("Signal Turnstile action is isolated");
+	else fail("Signal Turnstile", `Expected one, got ${await signalWidget.count()}`);
+	if ((await signalPage.locator("input[name='problem']").count()) === 5) {
+		pass("Five bounded roadmap problems rendered");
+	} else {
+		fail("Roadmap problems", "Expected five choices");
+	}
+	if ((await signalPage.locator("input[name='trialIntent']").count()) === 3) {
+		pass("Three bounded trial-intent choices rendered");
+	} else {
+		fail("Trial intent", "Expected three choices");
+	}
+	await takeScreenshot(signalPage, "signal");
+	await signalPage.close();
 } finally {
 	await browser.close();
 }

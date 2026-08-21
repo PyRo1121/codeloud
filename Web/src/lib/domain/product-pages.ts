@@ -20,7 +20,7 @@ export interface ProductPageDefinition {
 	readonly boundary: string;
 	readonly ctaLabel: string;
 	readonly cta:
-		| { readonly _tag: "internal"; readonly url: "/#interest" }
+		| { readonly _tag: "internal"; readonly url: "/early-access?product=voice" }
 		| { readonly _tag: "external"; readonly url: `https://${string}` };
 }
 
@@ -60,8 +60,8 @@ const PRODUCT_PAGES = {
 		boundaryTitle: "Provider boundaries stay visible",
 		boundary:
 			"Voice currently uses external speech providers. Retention, deletion, and training-use policies vary by provider, so CodeLoud does not claim universal local processing or zero retention.",
-		ctaLabel: "Send a Voice interest signal",
-		cta: { _tag: "internal", url: "/#interest" },
+		ctaLabel: "Request Voice early access",
+		cta: { _tag: "internal", url: "/early-access?product=voice" },
 	},
 	relay: {
 		id: "relay",
