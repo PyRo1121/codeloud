@@ -26,7 +26,7 @@
 				class="cf-turnstile"
 				data-sitekey={siteKey}
 				data-action="codeloud_interest"
-				data-theme="light"
+				data-theme="dark"
 			></div>
 		</div>
 	{:else}
@@ -174,7 +174,7 @@
 		width: 100%;
 		border: 1px solid var(--line-strong);
 		border-radius: 0;
-		background: rgb(255 255 255 / 36%);
+		background: var(--surface-raised);
 		padding: 0.8rem;
 		color: var(--text);
 		outline: none;

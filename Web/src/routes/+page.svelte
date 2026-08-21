@@ -11,6 +11,9 @@
 
 	let { data, form }: PageProps = $props();
 	let interestProduct = $state<InterestSelection>("both");
+	let contactFormOverride = $state<boolean | null>(null);
+	let contactResultOpen = $derived(Boolean(form && "kind" in form && form.kind === "contact"));
+	let contactFormExpanded = $derived(contactFormOverride ?? contactResultOpen);
 
 	function selectInterest(selection: InterestSelection): void {
 		interestProduct = selection;
@@ -18,7 +21,14 @@
 
 	function requestInterest(selection: ProductId): void {
 		interestProduct = selection;
+		contactFormOverride = true;
 		document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+	}
+
+	function handleContactToggle(event: Event): void {
+		if (event.currentTarget instanceof HTMLDetailsElement) {
+			contactFormOverride = event.currentTarget.open;
+		}
 	}
 </script>
 
@@ -57,48 +67,33 @@
 		<div class="hero-copy">
 			<p class="mono-label">Voice input / verified context</p>
 			<h1 id="hero-title">Say the code.<br />Show the source.</h1>
-			<p class="hero-intro">
-				CodeLoud makes two unreliable parts of agent work easier to inspect: what you meant and what
-				the agent knows.
+			<p>
+				Two tools for the unreliable edges of agent work: what you meant and what the agent knows.
 			</p>
 			<div class="hero-links">
-				<a href="#products">Meet the products <span aria-hidden="true">↓</span></a>
-				<a href="#signal">Tell us what breaks <span aria-hidden="true">↘</span></a>
+				<a href="#products">Meet Voice + Relay <span aria-hidden="true">↓</span></a>
+				<a href="#signal">Send a signal <span aria-hidden="true">↘</span></a>
 			</div>
 		</div>
 
 		<aside class="handoff-record" aria-label="An illustrative CodeLoud handoff record">
-			<header>
-				<span>HANDOFF / 0042</span>
-				<span class="record-state">source matched</span>
-			</header>
-			<div class="record-row record-raw">
-				<span>01 / heard</span>
-				<code>add retries to the relay client</code>
+			<header><span>HANDOFF / 0042</span><span>source matched</span></header>
+			<div><span>01 / heard</span><code>add retries to the relay client</code></div>
+			<div class="reviewed">
+				<span>02 / reviewed</span><code>add retries to <b>RelayClient</b></code>
 			</div>
-			<div class="record-row record-review">
-				<span>02 / reviewed</span>
-				<code>add retries to <mark>RelayClient</mark></code>
-			</div>
-			<div class="record-row record-source">
-				<span>03 / grounded</span>
-				<p><b>workers@4.123.0</b><br />2 bounded passages · exact version</p>
-			</div>
-			<footer>
-				<span>VOICE → HUMAN CHECK → RELAY</span>
-				<span>evidence stays attached</span>
-			</footer>
+			<div><span>03 / grounded</span><code><b>workers@4.123.0</b> · exact version</code></div>
+			<footer><span>VOICE → HUMAN CHECK → RELAY</span><span>evidence attached</span></footer>
 		</aside>
 	</section>
 
-	<section id="products" class="product-section page-shell" aria-labelledby="products-title">
+	<section id="products" class="products page-shell" aria-labelledby="products-title">
 		<header class="section-heading">
-			<p class="mono-label">Two tools / one handoff</p>
-			<h2 id="products-title">Less guessing at both ends.</h2>
-			<p>
-				Voice handles developer language before it reaches the agent. Relay handles technical
-				context before the agent relies on it.
-			</p>
+			<div>
+				<p class="mono-label">Two tools / one handoff</p>
+				<h2 id="products-title">Less guessing at both ends.</h2>
+			</div>
+			<p>Voice cleans up developer input. Relay brings exact, sourced context. Each has one job.</p>
 		</header>
 		<div class="product-list">
 			{#each PRODUCTS as product (product.id)}
@@ -111,73 +106,37 @@
 		</div>
 	</section>
 
-	<section class="method page-shell" aria-labelledby="method-title">
-		<header>
-			<p class="mono-label">The method</p>
-			<h2 id="method-title">Uncertainty should be visible, not smoothed over.</h2>
-		</header>
-		<ol>
-			<li>
-				<span>01</span><strong>Capture</strong>
-				<p>Start with the prompt, path, package, command, or rough idea.</p>
-			</li>
-			<li>
-				<span>02</span><strong>Check</strong>
-				<p>Keep uncertain terms reviewable before they become instructions.</p>
-			</li>
-			<li>
-				<span>03</span><strong>Ground</strong>
-				<p>Attach exact, sourced context before the agent acts.</p>
-			</li>
-		</ol>
-	</section>
-
-	<section
-		id="signal"
-		class="form-section signal-section page-shell"
-		aria-labelledby="signal-title"
-	>
-		<header class="form-heading">
-			<p class="mono-label">No-contact signal</p>
-			<h2 id="signal-title">Where does your workflow drag?</h2>
-			<p>
-				Two choices are more useful than another email signup. We keep only daily aggregates and do
-				not publish small totals.
-			</p>
+	<section id="signal" class="signal-section page-shell" aria-labelledby="signal-title">
+		<header class="section-heading signal-heading">
+			<div>
+				<p class="mono-label">No-contact signal</p>
+				<h2 id="signal-title">Where does your workflow drag?</h2>
+			</div>
+			<p>Two choices. No account. We retain only a daily aggregate.</p>
 		</header>
 		<InterestSignalForm siteKey={data.turnstileSiteKey} result={form} />
 	</section>
 
-	<section
-		id="contact"
-		class="form-section contact-section page-shell"
-		aria-labelledby="contact-title"
-	>
-		<header class="form-heading">
-			<p class="mono-label">Early access / optional</p>
-			<h2 id="contact-title">Want a reply from a person?</h2>
-			<p>
-				This is separate from the anonymous signal. Tell us what you would test and leave a way to
-				reach you.
-			</p>
-		</header>
-		<EarlyAccessForm
-			siteKey={data.turnstileSiteKey}
-			selection={interestProduct}
-			result={form}
-			onSelect={selectInterest}
-		/>
+	<section id="contact" class="contact-section page-shell">
+		<details open={contactFormExpanded} ontoggle={handleContactToggle}>
+			<summary>
+				<span><small>Early access / optional</small>Want a reply from a person?</span>
+				<b>{contactFormExpanded ? "Close form ↑" : "Open contact form ↓"}</b>
+			</summary>
+			<div class="contact-form-shell">
+				<p>
+					Separate from the anonymous signal. Tell us what you would test and leave a way to reach
+					you.
+				</p>
+				<EarlyAccessForm
+					siteKey={data.turnstileSiteKey}
+					selection={interestProduct}
+					result={form}
+					onSelect={selectInterest}
+				/>
+			</div>
+		</details>
 	</section>
-
-	<aside class="boundary-note page-shell" aria-labelledby="boundary-title">
-		<p class="mono-label">A useful boundary</p>
-		<h2 id="boundary-title">Voice is honest about its providers.</h2>
-		<p>
-			Voice currently uses external speech providers. Retention and training-use policies vary, so
-			CodeLoud does not make a universal zero-retention claim. Do not dictate credentials, secrets,
-			or sensitive source material before reviewing the applicable provider policy.
-		</p>
-	</aside>
 </main>
 
 <SiteFooter />
@@ -185,51 +144,47 @@
 <style>
 	.hero {
 		display: grid;
-		grid-template-columns: minmax(0, 1.05fr) minmax(25rem, 0.95fr);
+		grid-template-columns: minmax(0, 1.05fr) minmax(24rem, 0.95fr);
 		gap: clamp(3rem, 8vw, 8rem);
 		align-items: center;
-		min-height: 43rem;
-		padding-block: 5.5rem 6.5rem;
+		min-height: 38rem;
+		padding-block: 4.5rem 5.5rem;
 	}
 
-	.hero-copy .mono-label {
-		margin: 0 0 1.6rem;
+	.hero-copy .mono-label,
+	.section-heading .mono-label {
+		margin: 0 0 1.25rem;
 		color: var(--accent);
 	}
 
 	.hero h1 {
 		max-width: 10ch;
 		margin: 0;
-		font-size: clamp(4rem, 8vw, 8.4rem);
+		font-size: clamp(4rem, 7.5vw, 7.8rem);
 		font-weight: 650;
 		line-height: 0.82;
 		letter-spacing: -0.085em;
-		text-wrap: balance;
 	}
 
-	.hero-intro {
-		max-width: 43ch;
-		margin: 2.4rem 0 0;
+	.hero-copy > p:last-of-type {
+		max-width: 42ch;
+		margin: 2rem 0 0;
 		color: var(--muted);
-		font-size: clamp(1.05rem, 1.5vw, 1.3rem);
-		line-height: 1.45;
+		font-size: 1.05rem;
 	}
 
 	.hero-links {
 		display: flex;
-		gap: 1.8rem;
-		margin-top: 2.5rem;
+		gap: 1.5rem;
+		margin-top: 2rem;
 	}
 
 	.hero-links a {
-		border-bottom: 1px solid var(--text);
-		padding-bottom: 0.35rem;
+		border-bottom: 1px solid var(--line-strong);
+		padding-bottom: 0.3rem;
 		font-family: var(--mono);
-		font-size: 0.68rem;
+		font-size: 0.67rem;
 		text-decoration: none;
-		transition:
-			border-color 160ms ease,
-			color 160ms ease;
 	}
 
 	.hero-links a:hover {
@@ -238,42 +193,31 @@
 	}
 
 	.hero-links span {
-		margin-left: 0.45rem;
+		margin-left: 0.4rem;
 	}
 
 	.handoff-record {
-		position: relative;
 		border: 1px solid var(--line-strong);
 		background: var(--paper-raised);
-		box-shadow: 1rem 1rem 0 var(--ink-shadow);
-		transform: rotate(1.2deg);
-	}
-
-	.handoff-record::before {
-		position: absolute;
-		top: -1rem;
-		left: 12%;
-		width: 6rem;
-		height: 1.8rem;
-		background: rgb(218 207 176 / 72%);
-		content: "";
-		transform: rotate(-4deg);
+		box-shadow: 0.8rem 0.8rem 0 var(--ink-shadow);
+		transform: rotate(1deg);
 	}
 
 	.handoff-record header,
 	.handoff-record footer,
-	.record-row {
-		padding: 1rem 1.2rem;
+	.handoff-record > div {
+		display: grid;
+		grid-template-columns: 7rem 1fr;
+		gap: 1rem;
+		padding: 0.9rem 1rem;
 	}
 
 	.handoff-record header,
 	.handoff-record footer {
-		display: flex;
-		justify-content: space-between;
-		gap: 1rem;
+		grid-template-columns: 1fr auto;
 		font-family: var(--mono);
-		font-size: 0.6rem;
-		letter-spacing: 0.08em;
+		font-size: 0.58rem;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
 
@@ -281,250 +225,196 @@
 		border-bottom: 2px solid var(--text);
 	}
 
-	.record-state {
+	.handoff-record header span:last-child {
 		color: var(--positive);
 	}
 
-	.record-row {
-		display: grid;
-		grid-template-columns: 6.5rem 1fr;
-		gap: 1rem;
-		align-items: baseline;
+	.handoff-record > div {
 		border-bottom: 1px solid var(--line);
 	}
 
-	.record-row > span {
+	.handoff-record > div > span {
 		color: var(--muted);
 		font-family: var(--mono);
-		font-size: 0.6rem;
+		font-size: 0.58rem;
 		text-transform: uppercase;
 	}
 
-	.record-row code,
-	.record-row p {
-		margin: 0;
+	.handoff-record code {
 		font-family: var(--mono);
-		font-size: 0.78rem;
+		font-size: 0.73rem;
 	}
 
-	.record-row mark {
+	.handoff-record .reviewed {
 		background: var(--accent-soft);
-		color: var(--text);
-	}
-
-	.record-review {
-		background: var(--accent-soft);
-	}
-
-	.record-source {
-		min-height: 7rem;
-		align-items: center;
-	}
-
-	.record-source p {
-		line-height: 1.8;
 	}
 
 	.handoff-record footer {
 		color: var(--muted);
 	}
 
-	.product-section,
-	.method,
-	.form-section,
-	.boundary-note {
+	.products,
+	.signal-section,
+	.contact-section {
 		border-top: 1px solid var(--line-strong);
-	}
-
-	.product-section {
-		display: grid;
-		grid-template-columns: minmax(15rem, 0.45fr) minmax(0, 1.55fr);
-		gap: clamp(3rem, 8vw, 8rem);
-		padding-block: 6.5rem 8rem;
+		padding-block: 4.5rem 5.5rem;
 	}
 
 	.section-heading {
-		position: sticky;
-		top: 2rem;
-		align-self: start;
+		display: grid;
+		grid-template-columns: 1fr minmax(16rem, 0.55fr);
+		gap: 3rem;
+		align-items: end;
+		margin-bottom: 3rem;
 	}
 
-	.section-heading .mono-label,
-	.form-heading .mono-label,
-	.method .mono-label,
-	.boundary-note .mono-label {
+	.section-heading h2 {
+		max-width: 13ch;
 		margin: 0;
-		color: var(--accent);
-	}
-
-	.section-heading h2,
-	.form-heading h2,
-	.method h2,
-	.boundary-note h2 {
-		margin: 1.1rem 0 0;
-		font-size: clamp(2.3rem, 4.5vw, 4.8rem);
+		font-size: clamp(2.5rem, 4.5vw, 4.7rem);
 		font-weight: 640;
-		line-height: 0.92;
+		line-height: 0.9;
 		letter-spacing: -0.065em;
-		text-wrap: balance;
 	}
 
-	.section-heading > p:last-child,
-	.form-heading > p:last-child {
+	.section-heading > p {
 		max-width: 36ch;
-		margin: 1.7rem 0 0;
+		margin: 0;
 		color: var(--muted);
 	}
 
 	.product-list {
 		display: grid;
-		gap: 6rem;
-	}
-
-	.method {
-		display: grid;
-		grid-template-columns: minmax(15rem, 0.65fr) 1.35fr;
-		gap: clamp(3rem, 8vw, 8rem);
-		padding-block: 6rem;
-	}
-
-	.method h2 {
-		max-width: 12ch;
-		font-size: clamp(2.2rem, 4vw, 4.2rem);
-	}
-
-	.method ol {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.method li {
-		display: grid;
-		grid-template-columns: 3rem 8rem 1fr;
-		gap: 1rem;
-		border-top: 1px solid var(--line-strong);
-		padding: 1.4rem 0;
-	}
-
-	.method li span {
-		color: var(--accent);
-		font-family: var(--mono);
-		font-size: 0.65rem;
-	}
-
-	.method li strong {
-		font-size: 1.05rem;
-	}
-
-	.method li p {
-		max-width: 40ch;
-		margin: 0;
-		color: var(--muted);
-	}
-
-	.form-section {
-		display: grid;
-		grid-template-columns: minmax(15rem, 0.65fr) 1.35fr;
-		gap: clamp(3rem, 8vw, 8rem);
-		padding-block: 6rem 7rem;
-	}
-
-	.form-heading h2 {
-		max-width: 10ch;
+		grid-template-columns: 1fr 1fr;
+		gap: 1px;
+		background: var(--line-strong);
 	}
 
 	.signal-section {
-		background: linear-gradient(90deg, transparent 0 34%, var(--paper-raised) 34% 100%);
+		display: grid;
+		grid-template-columns: minmax(18rem, 0.7fr) 1.3fr;
+		gap: clamp(3rem, 8vw, 8rem);
+	}
+
+	.signal-heading {
+		display: block;
+		margin: 0;
+	}
+
+	.signal-heading > p {
+		margin-top: 1.5rem;
 	}
 
 	.contact-section {
-		padding-top: 7rem;
+		padding-block: 2.5rem 4rem;
 	}
 
-	.boundary-note {
+	details {
+		border-top: 3px solid var(--text);
+	}
+
+	summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 2rem;
+		padding: 1.3rem 0;
+		cursor: pointer;
+		list-style: none;
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	summary > span {
+		display: flex;
+		gap: 2rem;
+		align-items: baseline;
+		font-size: clamp(1.4rem, 2.5vw, 2.4rem);
+		font-weight: 650;
+		letter-spacing: -0.04em;
+	}
+
+	summary small,
+	summary b {
+		color: var(--accent);
+		font-family: var(--mono);
+		font-size: 0.63rem;
+		font-weight: 400;
+		text-transform: uppercase;
+	}
+
+	.contact-form-shell {
 		display: grid;
-		grid-template-columns: 0.45fr 0.65fr 0.9fr;
-		gap: clamp(2rem, 6vw, 6rem);
-		align-items: start;
-		padding-block: 4rem 6rem;
+		grid-template-columns: minmax(14rem, 0.55fr) 1.45fr;
+		gap: clamp(3rem, 8vw, 8rem);
+		padding-block: 2rem 3rem;
 	}
 
-	.boundary-note h2 {
-		margin: 0;
-		font-size: clamp(1.7rem, 3vw, 3rem);
-	}
-
-	.boundary-note > p:last-child {
+	.contact-form-shell > p {
+		max-width: 34ch;
 		margin: 0;
 		color: var(--muted);
-		font-size: 0.86rem;
 	}
 
 	@media (max-width: 900px) {
 		.hero,
-		.product-section,
-		.method,
-		.form-section,
-		.boundary-note {
+		.signal-section,
+		.contact-form-shell {
 			grid-template-columns: 1fr;
 		}
 
 		.hero {
 			min-height: auto;
-			padding-block: 4.5rem 6rem;
 		}
 
 		.handoff-record {
 			width: min(100% - 1rem, 38rem);
 		}
 
-		.section-heading {
-			position: static;
-		}
-
-		.signal-section {
-			background: transparent;
+		.product-list {
+			grid-template-columns: 1fr;
 		}
 	}
 
-	@media (max-width: 560px) {
+	@media (max-width: 620px) {
 		.hero {
-			gap: 4rem;
+			gap: 3.5rem;
+			padding-block: 3.5rem 4.5rem;
 		}
 
 		.hero h1 {
 			font-size: clamp(3.5rem, 18vw, 5.2rem);
 		}
 
-		.hero-links {
+		.hero-links,
+		summary > span {
 			align-items: flex-start;
 			flex-direction: column;
-			gap: 1rem;
+			gap: 0.8rem;
 		}
 
-		.record-row {
-			grid-template-columns: 1fr;
-			gap: 0.5rem;
-		}
-
+		.handoff-record > div,
+		.handoff-record header,
 		.handoff-record footer {
+			grid-template-columns: 1fr;
+			gap: 0.45rem;
+		}
+
+		.products,
+		.signal-section {
+			padding-block: 3.5rem 4rem;
+		}
+
+		.section-heading {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+			margin-bottom: 2.5rem;
+		}
+
+		summary {
 			align-items: flex-start;
-			flex-direction: column;
-		}
-
-		.product-section,
-		.method,
-		.form-section {
-			padding-block: 4.5rem 5.5rem;
-		}
-
-		.method li {
-			grid-template-columns: 2rem 1fr;
-		}
-
-		.method li p {
-			grid-column: 2;
 		}
 	}
 </style>

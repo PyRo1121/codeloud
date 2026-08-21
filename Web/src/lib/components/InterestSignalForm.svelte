@@ -69,7 +69,7 @@
 				class="cf-turnstile"
 				data-sitekey={siteKey}
 				data-action="codeloud_signal"
-				data-theme="light"
+				data-theme="dark"
 			></div>
 		</div>
 	{:else}
@@ -140,7 +140,7 @@
 		min-height: 3.2rem;
 		border: 1px solid var(--line-strong);
 		padding: 0.75rem 0.9rem;
-		background: rgb(255 255 255 / 32%);
+		background: var(--surface-raised);
 		color: var(--muted);
 		transition:
 			border-color 160ms ease,

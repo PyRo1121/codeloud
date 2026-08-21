@@ -15,21 +15,21 @@
 }
 
 :root {
-	color-scheme: light;
+	color-scheme: dark;
 	font-family: "Mona Sans Variable", ui-sans-serif, system-ui, sans-serif;
-	--bg: #f2f0e9;
-	--paper-raised: #f8f6ef;
-	--surface: #e8e5db;
-	--surface-raised: #f8f6ef;
-	--text: #181a17;
-	--muted: #62665e;
-	--faint: #858980;
-	--line: #d3d0c5;
-	--line-strong: #a8a79f;
-	--accent: #d84e2f;
-	--accent-soft: #f3d8cb;
-	--positive: #1c6a59;
-	--ink-shadow: #dad6ca;
+	--bg: #0d0e0c;
+	--paper-raised: #151612;
+	--surface: #171814;
+	--surface-raised: #1b1c18;
+	--text: #f0ede4;
+	--muted: #a09e95;
+	--faint: #72756d;
+	--line: #292b26;
+	--line-strong: #4a4d45;
+	--accent: #ff5a36;
+	--accent-soft: #342019;
+	--positive: #75b9a6;
+	--ink-shadow: #050605;
 	--voice: var(--accent);
 	--relay: var(--accent);
 	--signal: var(--text);
@@ -51,7 +51,7 @@ body {
 	min-height: 100vh;
 	margin: 0;
 	background:
-		radial-gradient(circle at 1px 1px, rgb(24 26 23 / 7%) 1px, transparent 0) 0 0 / 24px 24px,
+		radial-gradient(circle at 1px 1px, rgb(240 237 228 / 5%) 1px, transparent 0) 0 0 / 24px 24px,
 		var(--bg);
 	color: var(--text);
 	font-family: var(--sans);

@@ -145,6 +145,7 @@ try {
 	report("\nContact form:");
 	const formPage = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 	await formPage.goto(SITE_URL, { waitUntil: "domcontentloaded" });
+	await formPage.locator("details summary").click();
 	await formPage.locator("input[name='email']").fill("browser-inspect@example.com");
 	await formPage.locator("input[name='name']").fill("Browser Inspection");
 	await formPage

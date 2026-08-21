@@ -15,15 +15,14 @@
 <article class={`product-panel product-${product.id}`} id={product.id}>
 	<header class="product-meta">
 		<p class="mono-label">{product.id === "voice" ? "01 / input" : "02 / context"}</p>
-		<h3>{product.name}</h3>
 		<span>{product.status}</span>
 	</header>
 
 	<div class="product-statement">
 		<p class="product-eyebrow">{content.eyebrow}</p>
+		<h3>{product.name}</h3>
 		<h4>{content.heading}</h4>
 		<p>{content.body}</p>
-		<a class="detail-link" href={resolve(product.pageUrl)}>Full product brief <span>→</span></a>
 	</div>
 
 	<div class="capability-list">
@@ -37,13 +36,13 @@
 	</div>
 
 	<footer class="product-footer">
-		<p>{content.technicalNote}</p>
+		<a class="detail-link" href={resolve(product.pageUrl)}>Full product brief <span>→</span></a>
 		{#if product.applyUrl}
-			<a href={product.applyUrl} target="_blank" rel="external noopener">
+			<a class="product-action" href={product.applyUrl} target="_blank" rel="external noopener">
 				{content.cta}<span aria-hidden="true">↗</span>
 			</a>
 		{:else}
-			<button type="button" onclick={() => onInterest(product.id)}>
+			<button class="product-action" type="button" onclick={() => onInterest(product.id)}>
 				{content.cta}<span aria-hidden="true">↘</span>
 			</button>
 		{/if}
@@ -52,15 +51,17 @@
 
 <style>
 	.product-panel {
-		display: grid;
-		grid-template-columns: minmax(8rem, 0.35fr) minmax(15rem, 0.8fr) minmax(16rem, 0.85fr);
-		gap: clamp(2rem, 5vw, 5rem);
-		border-top: 3px solid var(--text);
-		padding-top: 1.4rem;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		background: var(--surface);
+		padding: clamp(1.4rem, 3vw, 2.2rem);
 	}
 
-	.product-relay {
-		margin-left: clamp(0rem, 6vw, 6rem);
+	.product-meta {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
 	}
 
 	.product-meta .mono-label,
@@ -69,159 +70,118 @@
 		color: var(--accent);
 	}
 
-	.product-meta h3 {
-		margin: 0.8rem 0 0;
-		font-size: clamp(1.4rem, 2vw, 2rem);
-		letter-spacing: -0.045em;
+	.product-meta > span,
+	.product-eyebrow {
+		font-family: var(--mono);
+		font-size: 0.6rem;
+		text-transform: uppercase;
 	}
 
 	.product-meta > span {
-		display: block;
-		margin-top: 0.5rem;
 		color: var(--muted);
-		font-family: var(--mono);
-		font-size: 0.62rem;
-		text-transform: uppercase;
 	}
 
-	.product-eyebrow {
-		font-family: var(--mono);
-		font-size: 0.62rem;
-		text-transform: uppercase;
+	.product-statement {
+		margin-top: 3rem;
+	}
+
+	.product-statement h3 {
+		margin: 0.7rem 0 0;
+		font-size: 1rem;
+		letter-spacing: -0.03em;
 	}
 
 	.product-statement h4 {
 		max-width: 11ch;
-		margin: 1.1rem 0 0;
-		font-size: clamp(2.2rem, 4vw, 4.5rem);
+		margin: 1.5rem 0 0;
+		font-size: clamp(2.2rem, 4vw, 4rem);
 		font-weight: 640;
-		line-height: 0.92;
+		line-height: 0.9;
 		letter-spacing: -0.065em;
 		text-wrap: balance;
 	}
 
-	.product-statement > p:nth-of-type(2) {
+	.product-statement > p:last-child {
 		max-width: 41ch;
-		margin: 1.5rem 0 0;
+		margin: 1.3rem 0 0;
 		color: var(--muted);
-	}
-
-	.detail-link {
-		display: inline-block;
-		margin-top: 1.8rem;
-		border-bottom: 1px solid var(--text);
-		padding-bottom: 0.3rem;
-		font-family: var(--mono);
-		font-size: 0.66rem;
-		text-decoration: none;
-	}
-
-	.detail-link span {
-		margin-left: 0.5rem;
-		color: var(--accent);
+		font-size: 0.88rem;
 	}
 
 	.capability-list {
+		margin-top: 2.5rem;
 		border-top: 1px solid var(--line-strong);
 	}
 
 	.capability {
 		display: grid;
-		grid-template-columns: 2rem 1fr;
-		gap: 0.4rem 0.8rem;
+		grid-template-columns: 2rem minmax(8rem, 0.7fr) 1.3fr;
+		gap: 0.8rem;
 		border-bottom: 1px solid var(--line);
-		padding: 1rem 0;
+		padding: 0.85rem 0;
 	}
 
 	.capability > span {
-		grid-row: 1 / 3;
 		color: var(--accent);
 		font-family: var(--mono);
-		font-size: 0.62rem;
+		font-size: 0.6rem;
 	}
 
 	.capability strong {
-		font-size: 0.84rem;
+		font-size: 0.76rem;
 	}
 
 	.capability p {
 		margin: 0;
 		color: var(--muted);
-		font-size: 0.78rem;
+		font-size: 0.7rem;
 	}
 
 	.product-footer {
-		grid-column: 2 / -1;
-		display: grid;
-		grid-template-columns: 1fr auto;
-		gap: 2rem;
-		align-items: end;
-		border-top: 1px solid var(--line);
-		padding-top: 1rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem 1.5rem;
+		justify-content: space-between;
+		margin-top: auto;
+		padding-top: 1.4rem;
 	}
 
-	.product-footer p {
-		max-width: 58ch;
-		margin: 0;
-		color: var(--muted);
-		font-size: 0.68rem;
-	}
-
-	.product-footer a,
-	.product-footer button {
+	.detail-link,
+	.product-action {
 		border: 0;
-		border-bottom: 1px solid var(--accent);
+		border-bottom: 1px solid currentColor;
 		background: transparent;
-		padding: 0.35rem 0;
-		color: var(--accent);
-		cursor: pointer;
-		font-size: 0.78rem;
-		font-weight: 700;
+		padding: 0.3rem 0;
+		font-family: var(--mono);
+		font-size: 0.64rem;
 		text-decoration: none;
 	}
 
-	.product-footer a span,
-	.product-footer button span {
-		margin-left: 0.6rem;
+	.detail-link {
+		color: var(--muted);
 	}
 
-	@media (max-width: 1050px) {
-		.product-panel {
-			grid-template-columns: 0.35fr 0.65fr;
-		}
+	.product-action {
+		color: var(--accent);
+		cursor: pointer;
+	}
 
-		.capability-list {
-			grid-column: 1 / -1;
-		}
-
-		.product-footer {
-			grid-column: 1 / -1;
-		}
+	.detail-link span,
+	.product-action span {
+		margin-left: 0.4rem;
 	}
 
 	@media (max-width: 620px) {
-		.product-panel {
-			grid-template-columns: 1fr;
-			gap: 2.5rem;
+		.product-statement {
+			margin-top: 2.2rem;
 		}
 
-		.product-relay {
-			margin-left: 0;
+		.capability {
+			grid-template-columns: 2rem 1fr;
 		}
 
-		.capability-list,
-		.product-footer {
-			grid-column: auto;
-		}
-
-		.product-footer {
-			grid-template-columns: 1fr;
-			align-items: start;
-		}
-
-		.product-footer a,
-		.product-footer button {
-			width: fit-content;
+		.capability p {
+			grid-column: 2;
 		}
 	}
 </style>
