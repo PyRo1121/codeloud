@@ -20,11 +20,11 @@ Voice addresses correction work. Relay addresses fact-checking work.
 
 Opening copy:
 
-> **Fix what your agent heard. Verify what it found.**
+> **Say what you mean. Make your agent show its work.**
 >
-> Voice reviews developer intent. Relay returns exact-version, sourced technical context.
+> CodeLoud is a family of developer tools for reliable instructions and inspectable technical context.
 
-The hero uses a full-width proof ledger rather than a conventional copy-and-product-card split. Voice and Relay remain visible together as failure → intervention → agent-ready result.
+The hero uses a full-width product-family map rather than a conventional copy-and-product-card split. Voice and Relay remain visible together with distinct problems, roles, and outcomes.
 
 ## Conversion
 
@@ -37,9 +37,9 @@ The hero uses a full-width proof ledger rather than a conventional copy-and-prod
 ## Homepage structure
 
 1. One-viewport hero with the promise, one sentence, two actions, and a concrete product-family visual.
-2. One product-demonstration section:
-   - Voice: spoken developer instruction to reviewed, code-aware text.
-   - Relay: technical question to exact-version sourced evidence.
+2. One benefit-led product section:
+   - Voice: speak naturally, review precise code-aware instructions, then send.
+   - Relay: ask technical questions, receive exact-version sourced evidence, and inspect it.
 3. One compact audience row: developers first, then teams and tool vendors.
 4. One final early-access action and the footer.
 

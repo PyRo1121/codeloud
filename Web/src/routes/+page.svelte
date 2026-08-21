@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
-	import FamilyDemo from "$lib/components/FamilyDemo.svelte";
+	import FamilyMap from "$lib/components/FamilyMap.svelte";
 	import SiteFooter from "$lib/components/SiteFooter.svelte";
 	import SiteHeader from "$lib/components/SiteHeader.svelte";
 	import { productFor } from "$lib/domain/product-catalog";
@@ -17,7 +17,7 @@
 	<link rel="canonical" href="https://codeloud.xyz/" />
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content="CodeLoud" />
-	<meta property="og:title" content="Stop correcting and fact-checking your coding agent" />
+	<meta property="og:title" content="Say what you mean. Make your agent show its work." />
 	<meta
 		property="og:description"
 		content="Voice fixes the input. Relay verifies the technical context."
@@ -25,7 +25,7 @@
 	<meta property="og:url" content="https://codeloud.xyz/" />
 	<meta property="og:image" content="https://codeloud.xyz/og-codeloud.png" />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content="Stop correcting and fact-checking your coding agent" />
+	<meta name="twitter:title" content="Say what you mean. Make your agent show its work." />
 	<meta
 		name="twitter:description"
 		content="Voice fixes the input. Relay verifies the technical context."
@@ -38,10 +38,11 @@
 <main>
 	<section class="hero page-shell" aria-labelledby="hero-title">
 		<div class="hero-copy">
-			<h1 id="hero-title">Fix what your agent heard. Verify what it found.</h1>
+			<h1 id="hero-title">Say what you mean. Make your agent show its work.</h1>
 			<div class="hero-intro">
 				<p>
-					Voice reviews developer intent. Relay returns exact-version, sourced technical context.
+					CodeLoud is a family of developer tools for reliable instructions and inspectable
+					technical context.
 				</p>
 				<div class="hero-actions">
 					<a class="primary-action" href={resolve("/early-access")}
@@ -51,13 +52,13 @@
 				</div>
 			</div>
 		</div>
-		<FamilyDemo />
+		<FamilyMap />
 	</section>
 
 	<section id="products" class="products page-shell" aria-labelledby="products-title">
 		<header>
-			<h2 id="products-title">Fix the input. Verify the context.</h2>
-			<p>Use either product on its own, or remove both sources of correction work.</p>
+			<h2 id="products-title">Two tools for a less-fragile agent workflow.</h2>
+			<p>Choose the correction loop you want to remove first.</p>
 		</header>
 
 		<div class="product-pair">
@@ -65,11 +66,15 @@
 				<div class="product-index"><span>01</span><i></i></div>
 				<div>
 					<p>CodeLoud Voice <small>Private development</small></p>
-					<h3>Stop cleaning up dictation before your agent can use it.</h3>
+					<h3>Speak naturally. Send precise instructions.</h3>
 					<span>
-						Review project terms, identifiers, paths, and commands before the text reaches your
-						editor or agent.
+						Voice turns spoken developer intent into code-aware text you approve before insertion.
 					</span>
+					<ul class="product-benefits">
+						<li><b>Recognize</b><span>Project terms, identifiers, paths, and commands</span></li>
+						<li><b>Review</b><span>See the exact instruction before anything is sent</span></li>
+						<li><b>Direct</b><span>Hand cleaner intent to your editor or coding agent</span></li>
+					</ul>
 					<div class="product-actions">
 						<a href={resolve("/voice")}>Explore Voice →</a>
 						<a href={resolve("/early-access?product=voice")}>Request access ↗</a>
@@ -81,11 +86,15 @@
 				<div class="product-index"><span>02</span><i></i></div>
 				<div>
 					<p>CodeLoud Relay <small>Private beta</small></p>
-					<h3>Stop checking whether your agent found the right documentation.</h3>
+					<h3>Ask technical questions. Get evidence, not guesses.</h3>
 					<span>
-						Resolve exact versions first, then return bounded passages with source locators and
-						evidence status.
+						Relay supplies exact-version technical context your agent can cite and you can inspect.
 					</span>
+					<ul class="product-benefits">
+						<li><b>Resolve</b><span>Identify the package and version actually in use</span></li>
+						<li><b>Source</b><span>Return bounded passages with source locations</span></li>
+						<li><b>Fail closed</b><span>Surface ambiguity instead of inventing certainty</span></li>
+					</ul>
 					<div class="product-actions">
 						<a href={resolve("/relay")}>Explore Relay →</a>
 						<a href={relay.applyUrl} target="_blank" rel="external noopener">Apply for beta ↗</a>
@@ -319,8 +328,36 @@
 		font-size: 0.86rem;
 	}
 
+	.product-benefits {
+		display: grid;
+		margin: 1.8rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.product-benefits li {
+		display: grid;
+		grid-template-columns: 5rem 1fr;
+		gap: 1rem;
+		border-top: 1px solid var(--line);
+		padding: 0.75rem 0;
+	}
+
+	.product-benefits b {
+		color: var(--accent);
+		font-family: var(--mono);
+		font-size: 0.58rem;
+		font-weight: 500;
+		text-transform: uppercase;
+	}
+
+	.product-benefits span {
+		color: var(--muted);
+		font-size: 0.76rem;
+	}
+
 	.product-actions {
-		margin-top: 1.8rem;
+		margin-top: 1.5rem;
 	}
 
 	.product-actions a {

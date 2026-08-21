@@ -84,7 +84,7 @@ try {
 	else fail("Page title", desktopTitle);
 
 	const heading = await desktop.locator("h1").textContent();
-	if (heading?.includes("Fix what your agent heard. Verify what it found."))
+	if (heading?.includes("Say what you mean. Make your agent show its work."))
 		pass("Hero states the central promise");
 	else fail("Hero promise", heading ?? "missing");
 
@@ -93,15 +93,15 @@ try {
 	if (ctaBox && ctaBox.y + ctaBox.height <= 800) pass("Primary CTA is visible above the fold");
 	else fail("Primary CTA", `box=${JSON.stringify(ctaBox)}`);
 
-	const proofLedger = desktop.locator(".demo-shell");
-	if ((await proofLedger.count()) === 1) pass("Product proof ledger rendered");
-	else fail("Product proof", "Expected one .demo-shell");
+	const familyMap = desktop.locator(".family-map");
+	if ((await familyMap.count()) === 1) pass("Product family map rendered");
+	else fail("Product family map", "Expected one .family-map");
 
-	const proofText = await proofLedger.textContent();
-	if (proofText?.includes("RelayClient") && proofText.includes("wrangler@4.123.0")) {
-		pass("Voice and Relay proof remain visible together");
+	const familyText = await familyMap.textContent();
+	if (familyText?.includes("Voice") && familyText.includes("Relay")) {
+		pass("Voice and Relay remain visible together");
 	} else {
-		fail("Product proof", proofText ?? "missing");
+		fail("Product family map", familyText ?? "missing");
 	}
 
 	if ((await desktop.locator("article.product").count()) === 2)
