@@ -6,7 +6,7 @@
 		"dev": "vite dev",
 		"build": "svelte-kit sync && vite build",
 		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && wrangler types --include-runtime=false --check",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && wrangler types --include-runtime=false --env-file wrangler-types.env --check",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"lint": "svelte-kit sync && oxlint --config oxlint.config.ts . && eslint . --max-warnings 0",
