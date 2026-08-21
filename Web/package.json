@@ -6,7 +6,7 @@
 		"dev": "vite dev",
 		"build": "svelte-kit sync && vite build",
 		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && wrangler types --include-runtime=false --check",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"lint": "svelte-kit sync && oxlint --config oxlint.config.ts . && eslint . --max-warnings 0",
@@ -14,7 +14,7 @@
 		"lint:eslint": "eslint . --max-warnings 0",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
-		"deploy": "npm run build && npx wrangler deploy",
+		"deploy": "npm run build && wrangler deploy --env=\"\"",
 		"browser:inspect": "node scripts/browser-inspect.mjs",
 		"browser:relay-beta": "node scripts/relay-beta-check.mjs"
 	},
@@ -30,7 +30,7 @@
 		"cookie": "0.7.2"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "5.20260815.1",
+		"@cloudflare/workers-types": "5.20260821.1",
 		"@eslint/js": "10.0.1",
 		"@oxlint/plugins": "1.78.0",
 		"@sveltejs/adapter-cloudflare": "7.2.9",

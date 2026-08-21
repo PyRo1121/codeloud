@@ -88,7 +88,9 @@ The page may describe Relay as an MCP server that consolidates exact-version doc
 
 Product interest is a measurement and access signal. It is not a promise of beta access. Relay's existing application endpoint, Turnstile policy, D1 storage, retention, status-token, and reviewer flows remain authoritative for Relay beta applications. The "Apply for Relay beta" CTAs on this site link to the Relay service's own application flow (`https://relay.codeloud.xyz/#beta`) rather than duplicating the form or proxying submissions; the interest form here is the measurement layer only.
 
-This public family site has a separate `codeloud_product_interest` table for product-interest measurement. It stores normalized contact information and the bounded workflow fields needed to understand Voice/Relay demand; it does not store audio, transcripts, source code, credentials, or Relay evidence. Turnstile server verification is required before the table is written. Missing binding, secret, hostname policy, or valid Siteverify response causes an unavailable result rather than a write.
+This public family site separates two demand signals. The `codeloud_product_interest` table is the opt-in contact path: it stores normalized contact information and bounded workflow fields needed to understand Voice/Relay demand; it does not store audio, transcripts, source code, credentials, or Relay evidence. The `codeloud_interest_signal_daily` table is the no-contact path: it stores only a daily aggregate keyed by bounded problem and trial-intent choices, with no individual event row, email, IP address, or user agent. These aggregates are verified submissions, not guaranteed unique people.
+
+Both writes require server-side Turnstile verification with distinct actions (`codeloud_interest` and `codeloud_signal`) and the production hostname allowlist. The no-contact path does not forward the request IP to Siteverify. Missing bindings, secret, hostname policy, or valid Siteverify response causes an unavailable result rather than a write.
 
 Sources:
 
@@ -125,14 +127,15 @@ The exact resolver returned evidence IDs for each reviewed npm package. The font
 
 Production provisioning (2026-08-17):
 
-- D1 database `codeloud-family-interest` (region WNAM) bound as `CODELOUD_INTEREST_DB`; migration `migrations/0001_product_interest.sql` applied remotely, creating `codeloud_product_interest`.
+- D1 database `codeloud-family-interest` (region WNAM) bound as `CODELOUD_INTEREST_DB`; migrations create the contact table `codeloud_product_interest` and the aggregate-only `codeloud_interest_signal_daily` table.
 - Turnstile widget `codeloud-interest` (managed mode) restricted to `codeloud.xyz`; site key exposed as the `TURNSTILE_SITE_KEY` var, secret stored as the `TURNSTILE_SECRET` worker secret (and in local-only `.dev.vars`, gitignored).
 - Worker `codeloud-family-site` deployed with the D1 binding, vars, secret, and the `codeloud.xyz` custom-domain route. Verified live: `GET /` returns 200 with the site key and Turnstile script; form POSTs without a valid token fail closed with the unavailable action data; SvelteKit's origin CSRF check rejects header-less cross-site POSTs.
 
 ## Next slices
 
 1. Full login + API-key verification on the Relay console (requires the sole account holder's credentials); then define the Voice key scopes (`voice:transcribe`, `voice:project-context`, `voice:receipts`) when Voice ships an authenticated service.
-2. Extend the browser inspection (`scripts/browser-inspect.mjs`) as new surfaces land.
+2. Submit `https://codeloud.xyz/sitemap.xml` through Google Search Console and inspect the canonical `/`, `/voice`, `/relay`, and `/privacy` URLs.
+3. Extend the browser inspection (`scripts/browser-inspect.mjs`) as new surfaces land.
 
 ## Authenticated console
 

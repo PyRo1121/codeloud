@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
 	import { resolve } from "$app/paths";
 	import { fade } from "svelte/transition";
 	import HandoffFieldLoader from "$lib/components/HandoffFieldLoader.svelte";
+	import InterestSignalForm from "$lib/components/InterestSignalForm.svelte";
 	import ProductPanel from "$lib/components/ProductPanel.svelte";
 	import { contentForProduct } from "$lib/domain/product-content";
 	import { INTEREST_SELECTIONS, type InterestSelection } from "$lib/domain/products";
@@ -31,11 +31,23 @@
 		name="description"
 		content="CodeLoud Voice improves what goes in. CodeLoud Relay improves the technical context coding agents can work from."
 	/>
+	<link rel="canonical" href="https://codeloud.xyz/" />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="CodeLoud" />
 	<meta property="og:title" content="CodeLoud | Voice and Relay for coding agents" />
 	<meta
 		property="og:description"
 		content="CodeLoud Voice improves what goes in. CodeLoud Relay improves what the agent can work from."
 	/>
+	<meta property="og:url" content="https://codeloud.xyz/" />
+	<meta property="og:image" content="https://codeloud.xyz/og-codeloud.png" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="CodeLoud | Voice and Relay for coding agents" />
+	<meta
+		name="twitter:description"
+		content="Developer dictation and exact-version technical context for coding agents."
+	/>
+	<meta name="twitter:image" content="https://codeloud.xyz/og-codeloud.png" />
 	{#if data.turnstileSiteKey}
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 	{/if}
@@ -188,16 +200,28 @@
 		</div>
 	</section>
 
-	<section class="interest-form-section page-shell" aria-labelledby="interest-form-title">
+	<section class="interest-form-section page-shell" aria-labelledby="signal-form-title">
 		<div class="interest-form-heading">
-			<p class="mono-label">Product signal</p>
-			<h2 id="interest-form-title">Tell us where to look first.</h2>
+			<p class="mono-label">No-contact signal</p>
+			<h2 id="signal-form-title">Tell us what costs you time.</h2>
 			<p>
-				Choose a product, describe the workflow, and leave a way to reach you. Registering interest
-				does not guarantee access.
+				Two choices give us a clearer demand signal than an email signup. We keep only daily
+				aggregates and do not publish totals while the sample is small.
 			</p>
 		</div>
-		<form class="interest-form" method="POST" action="?/interest" use:enhance>
+		<InterestSignalForm siteKey={data.turnstileSiteKey} result={form} />
+	</section>
+
+	<section class="interest-form-section page-shell" aria-labelledby="interest-form-title">
+		<div class="interest-form-heading">
+			<p class="mono-label">Early access</p>
+			<h2 id="interest-form-title">Want us to contact you?</h2>
+			<p>
+				Choose a product, describe the workflow, and leave a way to reach you. This separate form is
+				for people who want follow-up about access.
+			</p>
+		</div>
+		<form class="interest-form" method="POST" action="?/interest">
 			{#if data.turnstileSiteKey}
 				<div class="turnstile-shell">
 					<div
@@ -284,21 +308,21 @@
 			<label class="interest-consent"
 				><input type="checkbox" name="privacyConsent" value="true" required /><span
 					>I agree that CodeLoud may use this information to understand product interest and contact
-					me about access. *</span
+					me about access. See the <a href={resolve("/privacy")}>privacy notice</a>. *</span
 				></label
 			>
 			<label class="interest-honeypot" aria-hidden="true"
 				>Website <input name="website" tabindex="-1" autocomplete="off" /></label
 			>
-			{#if form && "ok" in form && form.ok === true}
+			{#if form && "kind" in form && form.kind === "contact" && "ok" in form && form.ok === true}
 				<p class="interest-result interest-result-success" role="status">
 					Interest noted for {form.product}. We will use this signal to shape access.
 				</p>
-			{:else if form && "message" in form}
+			{:else if form && "kind" in form && form.kind === "contact" && "message" in form}
 				<p class="interest-result interest-result-error" role="alert">{form.message}</p>
 			{/if}
 			<button class="interest-submit" type="submit"
-				>Send product signal <span aria-hidden="true">→</span></button
+				>Request early-access contact <span aria-hidden="true">→</span></button
 			>
 		</form>
 	</section>
@@ -323,7 +347,9 @@
 	</div>
 	<p>Voice improves what goes in. Relay improves what the agent can work from.</p>
 	<nav aria-label="Footer navigation">
-		<a href="#voice">Voice</a><a href="#relay">Relay</a><a href="#interest">Access</a><a
+		<a href={resolve("/voice")}>Voice</a><a href={resolve("/relay")}>Relay</a><a href="#interest"
+			>Access</a
+		><a href={resolve("/privacy")}>Privacy</a><a
 			href="https://relay.codeloud.xyz/account"
 			rel="external noopener">Console</a
 		>

@@ -2,7 +2,7 @@
 	"$schema": "https://unpkg.com/wrangler@4.123.0/config-schema.json",
 	"name": "codeloud-family-site",
 	"main": ".svelte-kit/cloudflare/_worker.js",
-	"compatibility_date": "2026-08-15",
+	"compatibility_date": "2026-08-21",
 	"compatibility_flags": ["nodejs_compat"],
 	"assets": {
 		"binding": "ASSETS",

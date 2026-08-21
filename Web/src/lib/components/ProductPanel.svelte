@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from "$app/paths";
 	import type { ProductContent } from "$lib/domain/product-content";
 	import type { ProductDefinition } from "$lib/domain/product-catalog";
 
@@ -31,6 +32,7 @@
 	</div>
 	<div class="product-panel-footer">
 		<p>{content.technicalNote}</p>
+		<a class="product-detail-link" href={resolve(product.pageUrl)}>Read the full product page →</a>
 		{#if product.applyUrl}
 			<a class="product-cta" href={product.applyUrl} target="_blank" rel="external noopener"
 				>{content.cta}<span aria-hidden="true">↗</span></a
@@ -89,6 +91,17 @@
 	.product-relay .product-panel-footer .product-cta,
 	.product-relay .product-panel-footer button {
 		color: var(--relay);
+	}
+
+	.product-detail-link {
+		color: var(--muted);
+		font-family: var(--mono);
+		font-size: 0.68rem;
+		text-decoration: none;
+	}
+
+	.product-detail-link:hover {
+		color: var(--text);
 	}
 
 	.product-status {

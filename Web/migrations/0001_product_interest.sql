@@ -1,6 +1,6 @@
 -- Public-family interest measurement only.
 -- This is intentionally separate from Relay's beta application authority.
-CREATE TABLE codeloud_product_interest (
+CREATE TABLE IF NOT EXISTS codeloud_product_interest (
 	email_normalized TEXT NOT NULL,
 	product_selection TEXT NOT NULL CHECK (product_selection IN ('voice', 'relay', 'both')),
 	applicant_name TEXT,

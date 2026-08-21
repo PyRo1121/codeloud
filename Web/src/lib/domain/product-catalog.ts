@@ -16,6 +16,7 @@ export interface ProductDefinition {
 	readonly descriptor: string;
 	readonly promise: string;
 	readonly accent: "voice" | "relay";
+	readonly pageUrl: "/voice" | "/relay";
 	/** The canonical application URL when the product accepts applications. */
 	readonly applyUrl?: string;
 }
@@ -29,6 +30,7 @@ export const PRODUCTS: readonly ProductDefinition[] = [
 		descriptor: "Developer dictation that keeps the terms that matter.",
 		promise: "Speech-to-text for prompts, code, commands, and notes with review before insertion.",
 		accent: "voice",
+		pageUrl: "/voice",
 	},
 	{
 		id: "relay",
@@ -38,6 +40,7 @@ export const PRODUCTS: readonly ProductDefinition[] = [
 		promise:
 			"Exact-version documentation, technical research, package review, and evidence in one focused connection.",
 		accent: "relay",
+		pageUrl: "/relay",
 		applyUrl: "https://relay.codeloud.xyz/#beta",
 	},
 ];

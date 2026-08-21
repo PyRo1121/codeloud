@@ -12,6 +12,8 @@ import {
 	saveProductInterest,
 	type InterestStoreDependencies,
 	type InterestSubmissionSecurity,
+	saveInterestSignal,
+	type InterestSignalStoreResult,
 	type ProductInterestDatabase,
 	type ProductInterestStoreResult,
 } from "./interest-store";
@@ -64,6 +66,7 @@ function security(overrides: Partial<InterestSubmissionSecurity> = {}): Interest
 		clientAddress: "203.0.113.7",
 		turnstileSecret: "secret",
 		allowedHostnames: ["codeloud.xyz"],
+		expectedAction: "codeloud_interest",
 		...overrides,
 	};
 }
@@ -131,6 +134,38 @@ describe("client address bounding", () => {
 		expect(admittedInterestClientAddress("")).toBe("unavailable");
 		expect(admittedInterestClientAddress("a".repeat(65))).toBe("unavailable");
 		expect(admittedInterestClientAddress("<script>")).toBe("unavailable");
+	});
+});
+
+describe("saveInterestSignal", () => {
+	it("increments only the bounded daily aggregate after verification", async () => {
+		const database = new FakeInterestDatabase();
+		const { fetchImplementation } = fakeSiteverify({
+			success: true,
+			action: "codeloud_signal",
+			hostname: "codeloud.xyz",
+		});
+		const outcome: Either.Either<InterestSignalStoreResult, InterestStoreError> =
+			await Effect.runPromise(
+				Effect.either(
+					saveInterestSignal(
+						database,
+						{ problem: "package_evaluation", trialIntent: "maybe" },
+						security({ expectedAction: "codeloud_signal", clientAddress: "unavailable" }),
+						dependencies({ fetch: fetchImplementation }),
+					),
+				),
+			);
+
+		expect(Either.isRight(outcome)).toBe(true);
+		if (Either.isRight(outcome)) expect(outcome.right).toEqual({ status: "counted" });
+		expect(database.queries[0]).toContain("ON CONFLICT(signal_day, problem, trial_intent)");
+		expect(database.writes[0]).toEqual([
+			"2026-08-17",
+			"package_evaluation",
+			"maybe",
+			"2026-08-17T00:00:00.000Z",
+		]);
 	});
 });
 

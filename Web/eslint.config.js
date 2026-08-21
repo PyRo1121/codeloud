@@ -27,6 +27,7 @@ export default [
 			"**/playwright-report/**",
 			"**/test-results/**",
 			"**/.wrangler/**",
+			"worker-configuration.d.ts",
 			"**/*.min.js",
 			// Archived pre-production mockup. Kept for history only; it is not
 			// part of the app's tsconfig and must not gate lint.

@@ -9,6 +9,7 @@ export default defineConfig({
 		"**/coverage/**",
 		"**/.svelte-kit/**",
 		"**/.wrangler/**",
+		"worker-configuration.d.ts",
 		"static/fonts/**",
 	],
 	jsPlugins: [{ name: "anti-slop", specifier: "./tools/oxlint/anti-slop/index.ts" }],

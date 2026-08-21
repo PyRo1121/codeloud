@@ -1,10 +1,16 @@
 import { Schema } from "effect";
 import { Effect } from "effect";
 import type { ProductInterestInput } from "$lib/domain/interest";
+import type { InterestSignalInput } from "$lib/domain/interest-signal";
 
 /** Result of persisting one product-interest submission. */
 export type ProductInterestStoreResult = {
 	readonly status: "created" | "duplicate";
+};
+
+/** Result of incrementing one aggregate no-contact signal. */
+export type InterestSignalStoreResult = {
+	readonly status: "counted";
 };
 
 /** Small database seam used by the interest writer and its focused tests. */
@@ -29,6 +35,7 @@ export interface InterestSubmissionSecurity {
 	readonly clientAddress: string;
 	readonly turnstileSecret: string;
 	readonly allowedHostnames: readonly string[];
+	readonly expectedAction: "codeloud_interest" | "codeloud_signal";
 }
 
 /** Expected Turnstile rejection or configuration failure. */
@@ -44,7 +51,6 @@ export class InterestPersistenceError extends Schema.TaggedError<InterestPersist
 ) {}
 
 const TURNSTILE_SITEVERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-const TURNSTILE_ACTION = "codeloud_interest";
 const MAX_TURNSTILE_TOKEN_LENGTH = 2_048;
 const TURNSTILE_TIMEOUT_MS = 10_000;
 const HOSTNAME_PATTERN =
@@ -140,6 +146,50 @@ export const saveProductInterest = (
 		}
 	});
 
+/** Increment one privacy-minimized daily signal aggregate after Turnstile verification. */
+export const saveInterestSignal = (
+	database: ProductInterestDatabase,
+	input: InterestSignalInput,
+	security: InterestSubmissionSecurity,
+	dependencies: InterestStoreDependencies,
+): Effect.Effect<
+	InterestSignalStoreResult,
+	InterestVerificationError | InterestPersistenceError,
+	never
+> =>
+	Effect.gen(function* () {
+		const verified = yield* verifyInterestTurnstile(security, dependencies.fetch);
+		if (!verified) {
+			return yield* Effect.fail(
+				new InterestVerificationError({
+					message: "Interest signal could not be verified.",
+				}),
+			);
+		}
+		const recordedAt = dependencies.now().toISOString();
+		const signalDay = recordedAt.slice(0, 10);
+		yield* Effect.tryPromise({
+			try: () =>
+				database
+					.prepare(
+						`INSERT INTO codeloud_interest_signal_daily
+						(signal_day, problem, trial_intent, signal_count, updated_at)
+						VALUES (?, ?, ?, 1, ?)
+						ON CONFLICT(signal_day, problem, trial_intent)
+						DO UPDATE SET signal_count = signal_count + 1, updated_at = excluded.updated_at`,
+					)
+					.bind(signalDay, input.problem, input.trialIntent, recordedAt)
+					.run(),
+			catch: (cause) => {
+				console.error("interest signal: aggregate write failed", cause);
+				return new InterestPersistenceError({
+					message: "Interest signal could not be stored.",
+				});
+			},
+		});
+		return { status: "counted" as const };
+	});
+
 const verifyInterestTurnstile = (
 	security: InterestSubmissionSecurity,
 	fetchImplementation: typeof fetch,
@@ -194,7 +244,7 @@ const verifyInterestTurnstile = (
 		);
 		const accepted =
 			parsed.success &&
-			parsed.action === TURNSTILE_ACTION &&
+			parsed.action === security.expectedAction &&
 			parsed.hostname !== undefined &&
 			security.allowedHostnames.includes(parsed.hostname.toLowerCase());
 		if (!accepted) console.error("product interest: Turnstile token rejected", parsed);
