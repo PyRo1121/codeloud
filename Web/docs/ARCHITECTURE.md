@@ -24,18 +24,9 @@ Sources:
 - SvelteKit Cloudflare adapter: <https://svelte.dev/docs/kit/adapter-cloudflare>
 - Cloudflare SvelteKit guide: <https://developers.cloudflare.com/workers/framework-guides/web-apps/sveltekit/>
 
-### Threlte for the signature visual
+### Semantic signature visual
 
-The public page uses Threlte 8 and Three.js only for the optional interactive handoff field. Threlte documents a declarative, typed, reactive Svelte binding to Three.js. Its `Canvas` component owns the renderer/camera context; the current implementation uses a single canvas, `renderMode="on-demand"`, and a clamped device-pixel ratio to bound work.
-
-The 3D layer is explanatory decoration, not the information source. All product copy and workflow states remain in semantic HTML. A future implementation must provide a non-WebGL DOM/CSS fallback and a reduced-motion mode.
-
-Sources:
-
-- Threlte introduction: <https://threlte.xyz/docs/learn/getting-started/introduction/>
-- Threlte first scene: <https://threlte.xyz/docs/learn/getting-started/your-first-scene/>
-- Threlte Canvas API: <https://threlte.xyz/docs/reference/core/canvas/>
-- Three.js WebGL compatibility: <https://threejs.org/manual/en/webgl-compatibility-check.html>
+The public page expresses the Voice-to-Relay handoff as a semantic HTML record with a CSS-only editorial treatment. The record shows heard, reviewed, and grounded states without canvas, WebGL, or a client-side graphics runtime. Product meaning remains readable without JavaScript, and the page avoids shipping a large decorative dependency to every visitor.
 
 ### UI primitives
 
@@ -100,7 +91,7 @@ Sources:
 
 ## Package provenance note
 
-The initial dependency selection was resolved against exact package versions on 2026-08-15 using Relay's bounded npm resolver and pre-install review. The review found verified npm registry signatures and, except for the Three.js case, verified npm provenance declarations; it did not download or independently verify tarball bytes. This is dependency-admission evidence, not a claim that the packages are risk-free.
+The initial dependency selection was resolved against exact package versions on 2026-08-15 using Relay's bounded npm resolver and pre-install review. The review found verified npm registry signatures and provenance declarations; it did not download or independently verify tarball bytes. This is dependency-admission evidence, not a claim that the packages are risk-free.
 
 The first install audit found the SvelteKit 2 cookie dependency path below `cookie@0.7.0`, which is affected by GHSA-pxg6-pf52-xh8x/CVE-2024-47764. The advisory's fixed version is `0.7.0`; this site pins the compatible `cookie@0.7.2` through npm `overrides` and upgrades Wrangler to `4.123.0`, which removes the audit findings in the current lockfile. We will remove the override when the SvelteKit major line naturally owns a compatible fixed cookie range.
 
@@ -117,8 +108,6 @@ Selected versions:
 - `@sveltejs/adapter-cloudflare@7.2.9`
 - `@sveltejs/vite-plugin-svelte@7.3.0`
 - `vite@8.2.1`
-- `@threlte/core@8.5.16`
-- `three@0.185.1`
 - self-hosted Mona Sans and Commit Mono font artifacts sourced from the existing CodeLoud public asset inventory
 
 The exact resolver returned evidence IDs for each reviewed npm package. The font files are self-hosted under `static/fonts/` so the page does not require a font CDN or a runtime font package. Source excerpts are not copied into this repository; the URLs above remain the durable citations.

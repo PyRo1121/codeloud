@@ -15,19 +15,24 @@
 }
 
 :root {
-	color-scheme: dark;
+	color-scheme: light;
 	font-family: "Mona Sans Variable", ui-sans-serif, system-ui, sans-serif;
-	--bg: #0b0d0d;
-	--surface: #111515;
-	--surface-raised: #171c1c;
-	--text: #eeeae1;
-	--muted: #a4aba5;
-	--faint: #69736e;
-	--line: #29302e;
-	--line-strong: #46504b;
-	--voice: #73e0bf;
-	--relay: #ff6633;
-	--signal: #eeeae1;
+	--bg: #f2f0e9;
+	--paper-raised: #f8f6ef;
+	--surface: #e8e5db;
+	--surface-raised: #f8f6ef;
+	--text: #181a17;
+	--muted: #62665e;
+	--faint: #858980;
+	--line: #d3d0c5;
+	--line-strong: #a8a79f;
+	--accent: #d84e2f;
+	--accent-soft: #f3d8cb;
+	--positive: #1c6a59;
+	--ink-shadow: #dad6ca;
+	--voice: var(--accent);
+	--relay: var(--accent);
+	--signal: var(--text);
 	--mono: "Commit Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 	--sans: "Mona Sans Variable", ui-sans-serif, system-ui, sans-serif;
 }
@@ -43,9 +48,11 @@ html {
 }
 
 body {
+	min-height: 100vh;
 	margin: 0;
 	background:
-		radial-gradient(circle at 50% -10%, rgb(48 65 59 / 20%), transparent 33rem), var(--bg);
+		radial-gradient(circle at 1px 1px, rgb(24 26 23 / 7%) 1px, transparent 0) 0 0 / 24px 24px,
+		var(--bg);
 	color: var(--text);
 	font-family: var(--sans);
 	line-height: 1.5;
@@ -70,12 +77,12 @@ a {
 }
 
 ::selection {
-	background: var(--voice);
-	color: #07110e;
+	background: var(--accent);
+	color: var(--paper-raised);
 }
 
 :focus-visible {
-	outline: 2px solid var(--voice);
+	outline: 2px solid var(--accent);
 	outline-offset: 4px;
 }
 
@@ -86,7 +93,7 @@ a {
 }
 
 .turnstile-unavailable {
-	border: 1px solid var(--line);
+	border: 1px solid var(--line-strong);
 	padding: 0.8rem;
 	color: var(--muted);
 	font-family: var(--mono);
@@ -94,20 +101,20 @@ a {
 }
 
 .page-shell {
-	width: min(1440px, calc(100% - 64px));
+	width: min(1280px, calc(100% - 64px));
 	margin-inline: auto;
 }
 
 .mono-label {
 	font-family: var(--mono);
-	font-size: 0.68rem;
-	letter-spacing: 0.15em;
+	font-size: 0.65rem;
+	letter-spacing: 0.1em;
 	text-transform: uppercase;
 }
 
 @media (max-width: 760px) {
 	.page-shell {
-		width: min(100% - 32px, 1440px);
+		width: min(100% - 32px, 1280px);
 	}
 }
 

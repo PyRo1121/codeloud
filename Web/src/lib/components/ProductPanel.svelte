@@ -13,194 +13,215 @@
 </script>
 
 <article class={`product-panel product-${product.id}`} id={product.id}>
-	<div class="product-panel-header">
-		<div>
-			<p class="mono-label">{content.eyebrow}</p>
-			<h2>{product.name}</h2>
-		</div>
-		<span class="product-status">{product.status}</span>
+	<header class="product-meta">
+		<p class="mono-label">{product.id === "voice" ? "01 / input" : "02 / context"}</p>
+		<h3>{product.name}</h3>
+		<span>{product.status}</span>
+	</header>
+
+	<div class="product-statement">
+		<p class="product-eyebrow">{content.eyebrow}</p>
+		<h4>{content.heading}</h4>
+		<p>{content.body}</p>
+		<a class="detail-link" href={resolve(product.pageUrl)}>Full product brief <span>→</span></a>
 	</div>
-	<h3>{content.heading}</h3>
-	<p class="product-body">{content.body}</p>
+
 	<div class="capability-list">
-		{#each content.capabilities as capability (capability.title)}
+		{#each content.capabilities as capability, index (capability.title)}
 			<div class="capability">
+				<span>{String(index + 1).padStart(2, "0")}</span>
 				<strong>{capability.title}</strong>
-				<span>{capability.detail}</span>
+				<p>{capability.detail}</p>
 			</div>
 		{/each}
 	</div>
-	<div class="product-panel-footer">
+
+	<footer class="product-footer">
 		<p>{content.technicalNote}</p>
-		<a class="product-detail-link" href={resolve(product.pageUrl)}>Read the full product page →</a>
 		{#if product.applyUrl}
-			<a class="product-cta" href={product.applyUrl} target="_blank" rel="external noopener"
-				>{content.cta}<span aria-hidden="true">↗</span></a
-			>
+			<a href={product.applyUrl} target="_blank" rel="external noopener">
+				{content.cta}<span aria-hidden="true">↗</span>
+			</a>
 		{:else}
-			<button type="button" onclick={() => onInterest(product.id)}
-				>{content.cta}<span aria-hidden="true">↗</span></button
-			>
+			<button type="button" onclick={() => onInterest(product.id)}>
+				{content.cta}<span aria-hidden="true">↘</span>
+			</button>
 		{/if}
-	</div>
+	</footer>
 </article>
 
 <style>
 	.product-panel {
-		position: relative;
-		display: flex;
-		min-height: 44rem;
-		flex-direction: column;
-		border-top: 2px solid var(--line-strong);
-		padding: 1.8rem 0 0;
-	}
-
-	.product-voice {
-		border-color: var(--voice);
+		display: grid;
+		grid-template-columns: minmax(8rem, 0.35fr) minmax(15rem, 0.8fr) minmax(16rem, 0.85fr);
+		gap: clamp(2rem, 5vw, 5rem);
+		border-top: 3px solid var(--text);
+		padding-top: 1.4rem;
 	}
 
 	.product-relay {
-		border-color: var(--relay);
+		margin-left: clamp(0rem, 6vw, 6rem);
 	}
 
-	.product-panel-header,
-	.product-panel-footer {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.product-panel-header h2 {
-		margin: 0.7rem 0 0;
-		font-size: clamp(1.5rem, 2.4vw, 2.2rem);
-		letter-spacing: -0.04em;
-	}
-
-	.product-panel .mono-label {
+	.product-meta .mono-label,
+	.product-eyebrow {
 		margin: 0;
-		color: var(--muted);
+		color: var(--accent);
 	}
 
-	.product-voice .mono-label,
-	.product-voice .product-panel-footer button {
-		color: var(--voice);
+	.product-meta h3 {
+		margin: 0.8rem 0 0;
+		font-size: clamp(1.4rem, 2vw, 2rem);
+		letter-spacing: -0.045em;
 	}
 
-	.product-relay .mono-label,
-	.product-relay .product-panel-footer .product-cta,
-	.product-relay .product-panel-footer button {
-		color: var(--relay);
-	}
-
-	.product-detail-link {
+	.product-meta > span {
+		display: block;
+		margin-top: 0.5rem;
 		color: var(--muted);
 		font-family: var(--mono);
-		font-size: 0.68rem;
+		font-size: 0.62rem;
+		text-transform: uppercase;
+	}
+
+	.product-eyebrow {
+		font-family: var(--mono);
+		font-size: 0.62rem;
+		text-transform: uppercase;
+	}
+
+	.product-statement h4 {
+		max-width: 11ch;
+		margin: 1.1rem 0 0;
+		font-size: clamp(2.2rem, 4vw, 4.5rem);
+		font-weight: 640;
+		line-height: 0.92;
+		letter-spacing: -0.065em;
+		text-wrap: balance;
+	}
+
+	.product-statement > p:nth-of-type(2) {
+		max-width: 41ch;
+		margin: 1.5rem 0 0;
+		color: var(--muted);
+	}
+
+	.detail-link {
+		display: inline-block;
+		margin-top: 1.8rem;
+		border-bottom: 1px solid var(--text);
+		padding-bottom: 0.3rem;
+		font-family: var(--mono);
+		font-size: 0.66rem;
 		text-decoration: none;
 	}
 
-	.product-detail-link:hover {
-		color: var(--text);
-	}
-
-	.product-status {
-		padding-top: 0.2rem;
-		color: var(--faint);
-		font-family: var(--mono);
-		font-size: 0.65rem;
-		letter-spacing: 0.05em;
-		text-transform: uppercase;
-		white-space: nowrap;
-	}
-
-	.product-panel h3 {
-		max-width: 12ch;
-		margin: 5rem 0 0;
-		font-size: clamp(2.4rem, 4.7vw, 5.2rem);
-		font-weight: 560;
-		line-height: 0.95;
-		letter-spacing: -0.07em;
-	}
-
-	.product-body {
-		max-width: 42ch;
-		margin: 1.8rem 0 0;
-		color: var(--muted);
-		font-size: 1.05rem;
+	.detail-link span {
+		margin-left: 0.5rem;
+		color: var(--accent);
 	}
 
 	.capability-list {
-		margin-top: auto;
-		border-top: 1px solid var(--line);
+		border-top: 1px solid var(--line-strong);
 	}
 
 	.capability {
 		display: grid;
-		grid-template-columns: minmax(9rem, 0.7fr) 1fr;
-		gap: 1rem;
+		grid-template-columns: 2rem 1fr;
+		gap: 0.4rem 0.8rem;
 		border-bottom: 1px solid var(--line);
 		padding: 1rem 0;
 	}
 
+	.capability > span {
+		grid-row: 1 / 3;
+		color: var(--accent);
+		font-family: var(--mono);
+		font-size: 0.62rem;
+	}
+
 	.capability strong {
-		font-size: 0.88rem;
+		font-size: 0.84rem;
 	}
 
-	.capability span {
-		color: var(--muted);
-		font-size: 0.83rem;
-	}
-
-	.product-panel-footer {
-		align-items: flex-end;
-		padding-top: 1.4rem;
-	}
-
-	.product-panel-footer p {
-		max-width: 32ch;
+	.capability p {
 		margin: 0;
-		color: var(--faint);
-		font-size: 0.75rem;
+		color: var(--muted);
+		font-size: 0.78rem;
 	}
 
-	.product-panel-footer button,
-	.product-panel-footer .product-cta {
+	.product-footer {
+		grid-column: 2 / -1;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 2rem;
+		align-items: end;
+		border-top: 1px solid var(--line);
+		padding-top: 1rem;
+	}
+
+	.product-footer p {
+		max-width: 58ch;
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.68rem;
+	}
+
+	.product-footer a,
+	.product-footer button {
 		border: 0;
-		border-bottom: 1px solid currentColor;
+		border-bottom: 1px solid var(--accent);
 		background: transparent;
-		padding: 0.4rem 0;
+		padding: 0.35rem 0;
+		color: var(--accent);
 		cursor: pointer;
-		font-size: 0.82rem;
-		font-weight: 650;
+		font-size: 0.78rem;
+		font-weight: 700;
 		text-decoration: none;
-		white-space: nowrap;
 	}
 
-	.product-panel-footer button span,
-	.product-panel-footer .product-cta span {
-		padding-left: 0.8rem;
-		font-size: 1.2rem;
+	.product-footer a span,
+	.product-footer button span {
+		margin-left: 0.6rem;
 	}
 
-	@media (max-width: 760px) {
+	@media (max-width: 1050px) {
 		.product-panel {
-			min-height: 0;
-			padding-bottom: 1rem;
+			grid-template-columns: 0.35fr 0.65fr;
 		}
 
-		.product-panel h3 {
-			margin-top: 3.5rem;
+		.capability-list {
+			grid-column: 1 / -1;
 		}
 
-		.capability {
+		.product-footer {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (max-width: 620px) {
+		.product-panel {
 			grid-template-columns: 1fr;
-			gap: 0.35rem;
+			gap: 2.5rem;
 		}
 
-		.product-panel-footer {
-			align-items: flex-start;
-			flex-direction: column;
+		.product-relay {
+			margin-left: 0;
+		}
+
+		.capability-list,
+		.product-footer {
+			grid-column: auto;
+		}
+
+		.product-footer {
+			grid-template-columns: 1fr;
+			align-items: start;
+		}
+
+		.product-footer a,
+		.product-footer button {
+			width: fit-content;
 		}
 	}
 </style>

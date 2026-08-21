@@ -1,27 +1,24 @@
 <script lang="ts">
-	import { resolve } from "$app/paths";
-	import { fade } from "svelte/transition";
-	import HandoffFieldLoader from "$lib/components/HandoffFieldLoader.svelte";
+	import EarlyAccessForm from "$lib/components/EarlyAccessForm.svelte";
 	import InterestSignalForm from "$lib/components/InterestSignalForm.svelte";
 	import ProductPanel from "$lib/components/ProductPanel.svelte";
+	import SiteFooter from "$lib/components/SiteFooter.svelte";
+	import SiteHeader from "$lib/components/SiteHeader.svelte";
 	import { contentForProduct } from "$lib/domain/product-content";
-	import { INTEREST_SELECTIONS, type InterestSelection } from "$lib/domain/products";
-	import { PRODUCTS, productFor, type ProductId } from "$lib/domain/product-catalog";
+	import { PRODUCTS, type ProductId } from "$lib/domain/product-catalog";
+	import type { InterestSelection } from "$lib/domain/products";
 	import type { PageProps } from "./$types";
 
 	let { data, form }: PageProps = $props();
-	let activeProduct = $state<ProductId>("voice");
 	let interestProduct = $state<InterestSelection>("both");
-	let selectedProduct = $derived(productFor(activeProduct));
-	let selectedContent = $derived(contentForProduct(activeProduct));
 
 	function selectInterest(selection: InterestSelection): void {
 		interestProduct = selection;
 	}
 
-	function requestInterest(selection: InterestSelection): void {
+	function requestInterest(selection: ProductId): void {
 		interestProduct = selection;
-		document.getElementById("interest")?.scrollIntoView({ behavior: "smooth", block: "start" });
+		document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
 	}
 </script>
 
@@ -53,1023 +50,481 @@
 	{/if}
 </svelte:head>
 
-<header class="site-header page-shell">
-	<a class="brand" href={resolve("/")} aria-label="CodeLoud home">
-		<span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
-		<span>CodeLoud</span>
-	</a>
-	<nav aria-label="Primary navigation">
-		<a href="#voice">Voice</a>
-		<a href="#relay">Relay</a>
-		<a href="#handoff">The handoff</a>
-	</nav>
-	<a class="header-status" href="#interest"><span></span>Explore the family</a>
-</header>
+<SiteHeader />
 
 <main>
 	<section class="hero page-shell" aria-labelledby="hero-title">
 		<div class="hero-copy">
-			<p class="hero-kicker mono-label">CodeLoud / developer systems</p>
-			<h1 id="hero-title">The missing layer between developers and coding agents.</h1>
-			<p class="hero-subtitle">
-				Voice improves what goes in. Relay improves what the agent can work from.
+			<p class="mono-label">Voice input / verified context</p>
+			<h1 id="hero-title">Say the code.<br />Show the source.</h1>
+			<p class="hero-intro">
+				CodeLoud makes two unreliable parts of agent work easier to inspect: what you meant and what
+				the agent knows.
 			</p>
-			<p class="hero-description">
-				CodeLoud makes the handoff from human intent to machine context more legible, reviewable,
-				and useful.
-			</p>
-			<div class="hero-actions">
-				<a class="hero-link hero-link-voice" href="#voice"
-					>Explore Voice <span aria-hidden="true">↘</span></a
-				>
-				<a class="hero-link hero-link-relay" href="#relay"
-					>Explore Relay <span aria-hidden="true">↘</span></a
-				>
-			</div>
-			<div class="hero-footnote">
-				<span>01</span><span>two products / one handoff</span><span>2026 / private builds</span>
+			<div class="hero-links">
+				<a href="#products">Meet the products <span aria-hidden="true">↓</span></a>
+				<a href="#signal">Tell us what breaks <span aria-hidden="true">↘</span></a>
 			</div>
 		</div>
-		<div class="hero-visual">
-			<HandoffFieldLoader {activeProduct} />
-			<div class="visual-caption">
-				<span>Illustrative product field</span><span>Voice ↔ Relay</span>
+
+		<aside class="handoff-record" aria-label="An illustrative CodeLoud handoff record">
+			<header>
+				<span>HANDOFF / 0042</span>
+				<span class="record-state">source matched</span>
+			</header>
+			<div class="record-row record-raw">
+				<span>01 / heard</span>
+				<code>add retries to the relay client</code>
 			</div>
-		</div>
+			<div class="record-row record-review">
+				<span>02 / reviewed</span>
+				<code>add retries to <mark>RelayClient</mark></code>
+			</div>
+			<div class="record-row record-source">
+				<span>03 / grounded</span>
+				<p><b>workers@4.123.0</b><br />2 bounded passages · exact version</p>
+			</div>
+			<footer>
+				<span>VOICE → HUMAN CHECK → RELAY</span>
+				<span>evidence stays attached</span>
+			</footer>
+		</aside>
 	</section>
 
-	<section id="handoff" class="handoff-section page-shell" aria-labelledby="handoff-title">
-		<div class="section-intro">
-			<p class="mono-label">The handoff</p>
-			<h2 id="handoff-title">Coding agents fail at the edges.</h2>
+	<section id="products" class="product-section page-shell" aria-labelledby="products-title">
+		<header class="section-heading">
+			<p class="mono-label">Two tools / one handoff</p>
+			<h2 id="products-title">Less guessing at both ends.</h2>
 			<p>
-				Speech can lose a symbol. Documentation can drift from a version. CodeLoud gives both sides
-				of the handoff somewhere to be checked.
+				Voice handles developer language before it reaches the agent. Relay handles technical
+				context before the agent relies on it.
 			</p>
-		</div>
-		<div class="handoff-steps" aria-label="CodeLoud handoff sequence">
-			<div class="handoff-step step-voice">
-				<span class="step-index">01</span>
-				<strong>Say it</strong>
-				<span>Prompt, path, package, command, idea.</span>
-			</div>
-			<div class="handoff-connector" aria-hidden="true">→</div>
-			<div class="handoff-step step-review">
-				<span class="step-index">02</span>
-				<strong>Review it</strong>
-				<span>Keep uncertain terms visible before delivery.</span>
-			</div>
-			<div class="handoff-connector" aria-hidden="true">→</div>
-			<div class="handoff-step step-relay">
-				<span class="step-index">03</span>
-				<strong>Ground it</strong>
-				<span>Give the agent exact, sourced context.</span>
-			</div>
-		</div>
-	</section>
-
-	<section class="product-switch page-shell" aria-labelledby="product-switch-title">
-		<div class="switch-heading">
-			<p class="mono-label">Two equal surfaces</p>
-			<h2 id="product-switch-title">Choose the layer you want to inspect.</h2>
-		</div>
-		<div class="product-tabs" role="tablist" aria-label="Product preview">
+		</header>
+		<div class="product-list">
 			{#each PRODUCTS as product (product.id)}
-				<button
-					class={`product-tab product-tab-${product.id} ${activeProduct === product.id ? "active" : ""}`}
-					role="tab"
-					aria-selected={activeProduct === product.id}
-					tabindex={activeProduct === product.id ? 0 : -1}
-					onclick={() => (activeProduct = product.id)}
-				>
-					<span>{product.name}</span>
-					<small>{product.status}</small>
-				</button>
+				<ProductPanel
+					{product}
+					content={contentForProduct(product.id)}
+					onInterest={requestInterest}
+				/>
 			{/each}
 		</div>
-		<div class="selected-product" aria-live="polite">
-			{#key activeProduct}
-				<div in:fade={{ duration: 220 }}>
-					<span class={`selected-marker selected-marker-${activeProduct}`}></span>
-					<strong>{selectedProduct?.name}</strong>
-					<span>{selectedContent.heading}</span>
-				</div>
-			{/key}
-		</div>
 	</section>
 
-	<section class="products page-shell" aria-label="CodeLoud products">
-		{#each PRODUCTS as product (product.id)}
-			<ProductPanel
-				{product}
-				content={contentForProduct(product.id)}
-				onInterest={requestInterest}
-			/>
-		{/each}
+	<section class="method page-shell" aria-labelledby="method-title">
+		<header>
+			<p class="mono-label">The method</p>
+			<h2 id="method-title">Uncertainty should be visible, not smoothed over.</h2>
+		</header>
+		<ol>
+			<li>
+				<span>01</span><strong>Capture</strong>
+				<p>Start with the prompt, path, package, command, or rough idea.</p>
+			</li>
+			<li>
+				<span>02</span><strong>Check</strong>
+				<p>Keep uncertain terms reviewable before they become instructions.</p>
+			</li>
+			<li>
+				<span>03</span><strong>Ground</strong>
+				<p>Attach exact, sourced context before the agent acts.</p>
+			</li>
+		</ol>
 	</section>
 
-	<section id="interest" class="interest-section page-shell" aria-labelledby="interest-title">
-		<div class="interest-copy">
-			<p class="mono-label">Product access</p>
-			<h2 id="interest-title">Start with the part of the handoff that feels most broken.</h2>
-			<p>
-				Voice is in private development. Relay is accepting private-beta applications on the Relay
-				service. Registering interest here is a signal, not an application.
-			</p>
-		</div>
-		<div class="interest-actions">
-			<button
-				class="interest-action interest-action-voice"
-				type="button"
-				onclick={() => requestInterest("voice")}
-			>
-				<span>Register Voice interest</span>
-				<small>Private development</small>
-				<b aria-hidden="true">↗</b>
-			</button>
-			<a
-				class="interest-action interest-action-relay"
-				href={productFor("relay").applyUrl}
-				target="_blank"
-				rel="external noopener"
-			>
-				<span>Apply for Relay beta</span>
-				<small>Application reviewed by a person</small>
-				<b aria-hidden="true">↗</b>
-			</a>
-		</div>
-	</section>
-
-	<section class="interest-form-section page-shell" aria-labelledby="signal-form-title">
-		<div class="interest-form-heading">
+	<section
+		id="signal"
+		class="form-section signal-section page-shell"
+		aria-labelledby="signal-title"
+	>
+		<header class="form-heading">
 			<p class="mono-label">No-contact signal</p>
-			<h2 id="signal-form-title">Tell us what costs you time.</h2>
+			<h2 id="signal-title">Where does your workflow drag?</h2>
 			<p>
-				Two choices give us a clearer demand signal than an email signup. We keep only daily
-				aggregates and do not publish totals while the sample is small.
+				Two choices are more useful than another email signup. We keep only daily aggregates and do
+				not publish small totals.
 			</p>
-		</div>
+		</header>
 		<InterestSignalForm siteKey={data.turnstileSiteKey} result={form} />
 	</section>
 
-	<section class="interest-form-section page-shell" aria-labelledby="interest-form-title">
-		<div class="interest-form-heading">
-			<p class="mono-label">Early access</p>
-			<h2 id="interest-form-title">Want us to contact you?</h2>
+	<section
+		id="contact"
+		class="form-section contact-section page-shell"
+		aria-labelledby="contact-title"
+	>
+		<header class="form-heading">
+			<p class="mono-label">Early access / optional</p>
+			<h2 id="contact-title">Want a reply from a person?</h2>
 			<p>
-				Choose a product, describe the workflow, and leave a way to reach you. This separate form is
-				for people who want follow-up about access.
+				This is separate from the anonymous signal. Tell us what you would test and leave a way to
+				reach you.
 			</p>
-		</div>
-		<form class="interest-form" method="POST" action="?/interest">
-			{#if data.turnstileSiteKey}
-				<div class="turnstile-shell">
-					<div
-						class="cf-turnstile"
-						data-sitekey={data.turnstileSiteKey}
-						data-action="codeloud_interest"
-						data-theme="dark"
-					></div>
-				</div>
-			{:else}
-				<p class="turnstile-unavailable">Interest capture is not configured in this environment.</p>
-			{/if}
-			<input type="hidden" name="product" value={interestProduct} />
-			<div class="interest-choice" role="group" aria-label="Product interest">
-				{#each INTEREST_SELECTIONS as choice (choice)}
-					<button
-						aria-pressed={interestProduct === choice}
-						class={`interest-choice-button ${interestProduct === choice ? "interest-choice-active" : ""}`}
-						type="button"
-						onclick={() => selectInterest(choice)}
-					>
-						{choice === "both"
-							? "Voice + Relay"
-							: choice === "voice"
-								? "CodeLoud Voice"
-								: "CodeLoud Relay"}
-					</button>
-				{/each}
-			</div>
-			<div class="interest-fields">
-				<label
-					><span>Email *</span><input
-						name="email"
-						type="email"
-						autocomplete="email"
-						required
-					/></label
-				>
-				<label><span>Name</span><input name="name" autocomplete="name" maxlength="120" /></label>
-			</div>
-			<label class="interest-workflow"
-				><span>What would you want to try first? *</span><textarea
-					name="workflow"
-					maxlength="500"
-					rows="4"
-					required></textarea></label
-			>
-			{#if interestProduct === "voice" || interestProduct === "both"}
-				<div class="interest-fields">
-					<label
-						><span>Operating system</span><input
-							name="operatingSystem"
-							maxlength="80"
-							placeholder="Linux, macOS, or Windows"
-						/></label
-					>
-					<label
-						><span>Editor or terminal</span><input
-							name="editor"
-							maxlength="120"
-							placeholder="VS Code, Neovim, terminal..."
-						/></label
-					>
-				</div>
-			{/if}
-			{#if interestProduct === "relay" || interestProduct === "both"}
-				<div class="interest-fields">
-					<label
-						><span>Coding agent or client</span><input
-							name="codingClient"
-							maxlength="120"
-							placeholder="Pi, Claude Code, Cursor..."
-						/></label
-					>
-					<label
-						><span>Private sources</span><select name="privateSourceNeeded"
-							><option value="">Not sure yet</option><option value="false"
-								>Public sources are enough</option
-							><option value="true">Private sources matter</option></select
-						></label
-					>
-				</div>
-			{/if}
-			<label class="interest-consent"
-				><input type="checkbox" name="privacyConsent" value="true" required /><span
-					>I agree that CodeLoud may use this information to understand product interest and contact
-					me about access. See the <a href={resolve("/privacy")}>privacy notice</a>. *</span
-				></label
-			>
-			<label class="interest-honeypot" aria-hidden="true"
-				>Website <input name="website" tabindex="-1" autocomplete="off" /></label
-			>
-			{#if form && "kind" in form && form.kind === "contact" && "ok" in form && form.ok === true}
-				<p class="interest-result interest-result-success" role="status">
-					Interest noted for {form.product}. We will use this signal to shape access.
-				</p>
-			{:else if form && "kind" in form && form.kind === "contact" && "message" in form}
-				<p class="interest-result interest-result-error" role="alert">{form.message}</p>
-			{/if}
-			<button class="interest-submit" type="submit"
-				>Request early-access contact <span aria-hidden="true">→</span></button
-			>
-		</form>
+		</header>
+		<EarlyAccessForm
+			siteKey={data.turnstileSiteKey}
+			selection={interestProduct}
+			result={form}
+			onSelect={selectInterest}
+		/>
 	</section>
 
-	<section class="policy-section page-shell" aria-labelledby="policy-title">
-		<div>
-			<p class="mono-label">A note on Voice</p>
-			<h2 id="policy-title">Useful before it is overconfident.</h2>
-		</div>
+	<aside class="boundary-note page-shell" aria-labelledby="boundary-title">
+		<p class="mono-label">A useful boundary</p>
+		<h2 id="boundary-title">Voice is honest about its providers.</h2>
 		<p>
-			Voice currently uses external speech providers. Audio and transcript handling depends on the
-			selected provider, and retention and training-use policies are not uniform. CodeLoud does not
-			make a universal zero-retention or deletion claim. Do not dictate credentials, secrets, or
-			sensitive source material until the applicable provider policy has been reviewed.
+			Voice currently uses external speech providers. Retention and training-use policies vary, so
+			CodeLoud does not make a universal zero-retention claim. Do not dictate credentials, secrets,
+			or sensitive source material before reviewing the applicable provider policy.
 		</p>
-	</section>
+	</aside>
 </main>
 
-<footer class="site-footer page-shell">
-	<div class="brand">
-		<span class="brand-mark" aria-hidden="true"><i></i><i></i></span><span>CodeLoud</span>
-	</div>
-	<p>Voice improves what goes in. Relay improves what the agent can work from.</p>
-	<nav aria-label="Footer navigation">
-		<a href={resolve("/voice")}>Voice</a><a href={resolve("/relay")}>Relay</a><a href="#interest"
-			>Access</a
-		><a href={resolve("/privacy")}>Privacy</a><a
-			href="https://relay.codeloud.xyz/account"
-			rel="external noopener">Console</a
-		>
-	</nav>
-</footer>
+<SiteFooter />
 
 <style>
-	.site-header {
-		display: grid;
-		grid-template-columns: 1fr auto 1fr;
-		align-items: center;
-		min-height: 5rem;
-		border-bottom: 1px solid var(--line);
-	}
-
-	.brand {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.7rem;
-		width: fit-content;
-		font-size: 1.05rem;
-		font-weight: 680;
-		letter-spacing: -0.04em;
-		text-decoration: none;
-	}
-
-	.brand-mark {
-		position: relative;
-		display: inline-block;
-		width: 1.1rem;
-		height: 1.1rem;
-		border: 1px solid var(--line-strong);
-		transform: rotate(45deg);
-	}
-
-	.brand-mark i {
-		position: absolute;
-		display: block;
-		background: var(--signal);
-	}
-
-	.brand-mark i:first-child {
-		inset: 0.18rem auto 0.18rem 50%;
-		width: 1px;
-	}
-
-	.brand-mark i:last-child {
-		top: 50%;
-		right: 0.18rem;
-		left: 0.18rem;
-		height: 1px;
-	}
-
-	.site-header nav,
-	.site-footer nav {
-		display: flex;
-		gap: 1.6rem;
-	}
-
-	.site-header nav a,
-	.site-footer nav a {
-		color: var(--muted);
-		font-family: var(--mono);
-		font-size: 0.68rem;
-		text-decoration: none;
-	}
-
-	.site-header nav a:hover,
-	.site-footer nav a:hover {
-		color: var(--text);
-	}
-
-	.header-status {
-		justify-self: end;
-		color: var(--muted);
-		font-family: var(--mono);
-		font-size: 0.65rem;
-		text-decoration: none;
-		text-transform: uppercase;
-	}
-
-	.header-status span {
-		display: inline-block;
-		width: 0.45rem;
-		height: 0.45rem;
-		margin-right: 0.45rem;
-		border-radius: 999px;
-		background: var(--voice);
-		box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--voice) 12%, transparent);
-	}
-
 	.hero {
 		display: grid;
-		grid-template-columns: minmax(0, 0.95fr) minmax(30rem, 1.05fr);
-		gap: clamp(3rem, 8vw, 9rem);
+		grid-template-columns: minmax(0, 1.05fr) minmax(25rem, 0.95fr);
+		gap: clamp(3rem, 8vw, 8rem);
 		align-items: center;
-		min-height: calc(100svh - 5rem);
-		padding: 4.5rem 0 5rem;
+		min-height: 43rem;
+		padding-block: 5.5rem 6.5rem;
 	}
 
-	.hero-copy {
-		position: relative;
-		z-index: 1;
-	}
-
-	.hero-kicker {
-		margin: 0 0 2rem;
-		color: var(--voice);
+	.hero-copy .mono-label {
+		margin: 0 0 1.6rem;
+		color: var(--accent);
 	}
 
 	.hero h1 {
-		max-width: 9.5ch;
+		max-width: 10ch;
 		margin: 0;
-		font-size: clamp(3.5rem, 7vw, 7.6rem);
-		font-weight: 560;
-		line-height: 0.88;
+		font-size: clamp(4rem, 8vw, 8.4rem);
+		font-weight: 650;
+		line-height: 0.82;
 		letter-spacing: -0.085em;
 		text-wrap: balance;
 	}
 
-	.hero-subtitle {
-		max-width: 31ch;
-		margin: 2.2rem 0 0;
-		font-size: clamp(1.25rem, 2vw, 1.7rem);
-		line-height: 1.15;
-		letter-spacing: -0.04em;
-	}
-
-	.hero-description {
-		max-width: 38ch;
-		margin: 1.2rem 0 0;
+	.hero-intro {
+		max-width: 43ch;
+		margin: 2.4rem 0 0;
 		color: var(--muted);
-		font-size: 1rem;
+		font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+		line-height: 1.45;
 	}
 
-	.hero-actions {
+	.hero-links {
 		display: flex;
-		gap: 1.6rem;
-		margin-top: 2.4rem;
+		gap: 1.8rem;
+		margin-top: 2.5rem;
 	}
 
-	.hero-link {
-		border-bottom: 1px solid currentColor;
-		padding: 0.35rem 0;
-		font-size: 0.9rem;
-		font-weight: 650;
-		text-decoration: none;
-	}
-
-	.hero-link span {
-		padding-left: 0.65rem;
-		font-size: 1.15rem;
-	}
-
-	.hero-link-voice {
-		color: var(--voice);
-	}
-
-	.hero-link-relay {
-		color: var(--relay);
-	}
-
-	.hero-footnote {
-		display: flex;
-		gap: 1.1rem;
-		margin-top: 4.6rem;
-		color: var(--faint);
+	.hero-links a {
+		border-bottom: 1px solid var(--text);
+		padding-bottom: 0.35rem;
 		font-family: var(--mono);
-		font-size: 0.62rem;
+		font-size: 0.68rem;
+		text-decoration: none;
+		transition:
+			border-color 160ms ease,
+			color 160ms ease;
+	}
+
+	.hero-links a:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	.hero-links span {
+		margin-left: 0.45rem;
+	}
+
+	.handoff-record {
+		position: relative;
+		border: 1px solid var(--line-strong);
+		background: var(--paper-raised);
+		box-shadow: 1rem 1rem 0 var(--ink-shadow);
+		transform: rotate(1.2deg);
+	}
+
+	.handoff-record::before {
+		position: absolute;
+		top: -1rem;
+		left: 12%;
+		width: 6rem;
+		height: 1.8rem;
+		background: rgb(218 207 176 / 72%);
+		content: "";
+		transform: rotate(-4deg);
+	}
+
+	.handoff-record header,
+	.handoff-record footer,
+	.record-row {
+		padding: 1rem 1.2rem;
+	}
+
+	.handoff-record header,
+	.handoff-record footer {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		font-family: var(--mono);
+		font-size: 0.6rem;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 	}
 
-	.hero-footnote span:first-child {
+	.handoff-record header {
+		border-bottom: 2px solid var(--text);
+	}
+
+	.record-state {
+		color: var(--positive);
+	}
+
+	.record-row {
+		display: grid;
+		grid-template-columns: 6.5rem 1fr;
+		gap: 1rem;
+		align-items: baseline;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.record-row > span {
+		color: var(--muted);
+		font-family: var(--mono);
+		font-size: 0.6rem;
+		text-transform: uppercase;
+	}
+
+	.record-row code,
+	.record-row p {
+		margin: 0;
+		font-family: var(--mono);
+		font-size: 0.78rem;
+	}
+
+	.record-row mark {
+		background: var(--accent-soft);
 		color: var(--text);
 	}
 
-	.hero-visual {
-		position: relative;
+	.record-review {
+		background: var(--accent-soft);
 	}
 
-	.visual-caption {
-		display: flex;
-		justify-content: space-between;
-		padding-top: 0.75rem;
-		color: var(--faint);
-		font-family: var(--mono);
-		font-size: 0.62rem;
-		text-transform: uppercase;
-	}
-
-	.handoff-section,
-	.product-switch,
-	.interest-section,
-	.interest-form-section,
-	.policy-section {
-		border-top: 1px solid var(--line);
-	}
-
-	.handoff-section {
-		display: grid;
-		grid-template-columns: minmax(14rem, 0.7fr) 1.3fr;
-		gap: 9vw;
-		padding: 8rem 0;
-	}
-
-	.section-intro h2,
-	.switch-heading h2,
-	.interest-copy h2,
-	.policy-section h2 {
-		max-width: 10ch;
-		margin: 1.3rem 0 0;
-		font-size: clamp(2.6rem, 5vw, 5.3rem);
-		font-weight: 560;
-		line-height: 0.94;
-		letter-spacing: -0.075em;
-	}
-
-	.section-intro .mono-label,
-	.switch-heading .mono-label,
-	.interest-copy .mono-label,
-	.policy-section .mono-label {
-		margin: 0;
-		color: var(--muted);
-	}
-
-	.section-intro > p:last-child {
-		max-width: 29ch;
-		margin: 2rem 0 0;
-		color: var(--muted);
-	}
-
-	.handoff-steps {
-		align-self: end;
-		display: grid;
-		grid-template-columns: 1fr auto 1fr auto 1fr;
-		gap: 1rem;
+	.record-source {
+		min-height: 7rem;
 		align-items: center;
 	}
 
-	.handoff-step {
-		display: grid;
-		gap: 0.45rem;
-		min-height: 8rem;
-		align-content: start;
-		border-top: 1px solid var(--line-strong);
-		padding-top: 1rem;
+	.record-source p {
+		line-height: 1.8;
 	}
 
-	.handoff-step .step-index {
-		color: var(--faint);
+	.handoff-record footer {
+		color: var(--muted);
+	}
+
+	.product-section,
+	.method,
+	.form-section,
+	.boundary-note {
+		border-top: 1px solid var(--line-strong);
+	}
+
+	.product-section {
+		display: grid;
+		grid-template-columns: minmax(15rem, 0.45fr) minmax(0, 1.55fr);
+		gap: clamp(3rem, 8vw, 8rem);
+		padding-block: 6.5rem 8rem;
+	}
+
+	.section-heading {
+		position: sticky;
+		top: 2rem;
+		align-self: start;
+	}
+
+	.section-heading .mono-label,
+	.form-heading .mono-label,
+	.method .mono-label,
+	.boundary-note .mono-label {
+		margin: 0;
+		color: var(--accent);
+	}
+
+	.section-heading h2,
+	.form-heading h2,
+	.method h2,
+	.boundary-note h2 {
+		margin: 1.1rem 0 0;
+		font-size: clamp(2.3rem, 4.5vw, 4.8rem);
+		font-weight: 640;
+		line-height: 0.92;
+		letter-spacing: -0.065em;
+		text-wrap: balance;
+	}
+
+	.section-heading > p:last-child,
+	.form-heading > p:last-child {
+		max-width: 36ch;
+		margin: 1.7rem 0 0;
+		color: var(--muted);
+	}
+
+	.product-list {
+		display: grid;
+		gap: 6rem;
+	}
+
+	.method {
+		display: grid;
+		grid-template-columns: minmax(15rem, 0.65fr) 1.35fr;
+		gap: clamp(3rem, 8vw, 8rem);
+		padding-block: 6rem;
+	}
+
+	.method h2 {
+		max-width: 12ch;
+		font-size: clamp(2.2rem, 4vw, 4.2rem);
+	}
+
+	.method ol {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.method li {
+		display: grid;
+		grid-template-columns: 3rem 8rem 1fr;
+		gap: 1rem;
+		border-top: 1px solid var(--line-strong);
+		padding: 1.4rem 0;
+	}
+
+	.method li span {
+		color: var(--accent);
 		font-family: var(--mono);
 		font-size: 0.65rem;
 	}
 
-	.handoff-step strong {
-		font-size: 1.25rem;
-		letter-spacing: -0.04em;
-	}
-
-	.handoff-step > span:last-child {
-		color: var(--muted);
-		font-size: 0.82rem;
-	}
-
-	.step-voice {
-		border-color: var(--voice);
-	}
-
-	.step-voice .step-index {
-		color: var(--voice);
-	}
-
-	.step-relay {
-		border-color: var(--relay);
-	}
-
-	.step-relay .step-index {
-		color: var(--relay);
-	}
-
-	.handoff-connector {
-		color: var(--line-strong);
-		font-size: 1.5rem;
-	}
-
-	.product-switch {
-		display: grid;
-		grid-template-columns: minmax(14rem, 0.7fr) 1.3fr;
-		gap: 9vw;
-		padding: 3.2rem 0;
-	}
-
-	.switch-heading h2 {
-		font-size: clamp(2rem, 3.5vw, 3.5rem);
-	}
-
-	.product-tabs {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		align-self: start;
-		border-bottom: 1px solid var(--line);
-	}
-
-	.product-tab {
-		display: grid;
-		gap: 0.5rem;
-		border: 0;
-		border-top: 2px solid var(--line-strong);
-		background: transparent;
-		padding: 1rem 0.7rem 1rem 0;
-		color: var(--muted);
-		cursor: pointer;
-		text-align: left;
-	}
-
-	.product-tab.active.product-tab-voice {
-		border-color: var(--voice);
-		color: var(--voice);
-	}
-
-	.product-tab.active.product-tab-relay {
-		border-color: var(--relay);
-		color: var(--relay);
-	}
-
-	.product-tab span {
+	.method li strong {
 		font-size: 1.05rem;
-		font-weight: 650;
 	}
 
-	.product-tab small {
-		color: var(--faint);
-		font-family: var(--mono);
-		font-size: 0.62rem;
-		text-transform: uppercase;
-	}
-
-	.selected-product {
-		grid-column: 2;
-		min-height: 2rem;
-		margin-top: -1.5rem;
-		color: var(--muted);
-		font-size: 0.9rem;
-	}
-
-	.selected-product > div {
-		display: flex;
-		align-items: center;
-		gap: 0.7rem;
-	}
-
-	.selected-product strong {
-		color: var(--text);
-	}
-
-	.selected-marker {
-		width: 0.5rem;
-		height: 0.5rem;
-		border-radius: 999px;
-	}
-
-	.selected-marker-voice {
-		background: var(--voice);
-	}
-
-	.selected-marker-relay {
-		background: var(--relay);
-	}
-
-	.products {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: clamp(2.5rem, 8vw, 8rem);
-		padding: 7rem 0 9rem;
-	}
-
-	.interest-section {
-		display: grid;
-		grid-template-columns: minmax(14rem, 0.7fr) 1.3fr;
-		gap: 9vw;
-		padding: 8rem 0;
-	}
-
-	.interest-form-section {
-		display: grid;
-		grid-template-columns: minmax(14rem, 0.7fr) 1.3fr;
-		gap: 9vw;
-		padding: 4rem 0 8rem;
-	}
-
-	.interest-copy > p:last-child {
-		max-width: 37ch;
-		margin: 2rem 0 0;
+	.method li p {
+		max-width: 40ch;
+		margin: 0;
 		color: var(--muted);
 	}
 
-	.interest-actions {
+	.form-section {
 		display: grid;
-		align-content: end;
+		grid-template-columns: minmax(15rem, 0.65fr) 1.35fr;
+		gap: clamp(3rem, 8vw, 8rem);
+		padding-block: 6rem 7rem;
 	}
 
-	.interest-action {
-		display: grid;
-		grid-template-columns: 1fr auto;
-		gap: 0.25rem 1rem;
-		border-top: 1px solid var(--line-strong);
-		padding: 1.2rem 0;
-		text-decoration: none;
-	}
-
-	.interest-action,
-	.interest-choice-button,
-	.interest-submit {
-		cursor: pointer;
-	}
-
-	.interest-action span {
-		font-size: 1.15rem;
-		font-weight: 650;
-	}
-
-	.interest-action small {
-		grid-column: 1;
-		color: var(--muted);
-		font-family: var(--mono);
-		font-size: 0.62rem;
-		text-transform: uppercase;
-	}
-
-	.interest-action b {
-		grid-column: 2;
-		grid-row: 1 / 3;
-		align-self: center;
-		font-size: 1.4rem;
-		font-weight: 400;
-	}
-
-	.interest-action-voice span,
-	.interest-action-voice b {
-		color: var(--voice);
-	}
-
-	.interest-action-relay span,
-	.interest-action-relay b {
-		color: var(--relay);
-	}
-
-	.interest-form-heading h2 {
+	.form-heading h2 {
 		max-width: 10ch;
-		margin: 1.3rem 0 0;
-		font-size: clamp(2.3rem, 4vw, 4rem);
-		font-weight: 560;
-		line-height: 0.94;
-		letter-spacing: -0.075em;
 	}
 
-	.interest-form-heading .mono-label {
-		margin: 0;
-		color: var(--muted);
+	.signal-section {
+		background: linear-gradient(90deg, transparent 0 34%, var(--paper-raised) 34% 100%);
 	}
 
-	.interest-form-heading > p:last-child {
-		max-width: 34ch;
-		margin-top: 2rem;
-		color: var(--muted);
+	.contact-section {
+		padding-top: 7rem;
 	}
 
-	.interest-form {
+	.boundary-note {
 		display: grid;
-		gap: 1rem;
-		border-top: 1px solid var(--line-strong);
-		padding-top: 1rem;
-	}
-
-	.interest-choice {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 0.5rem;
-	}
-
-	.interest-choice-button {
-		border: 1px solid var(--line);
-		background: transparent;
-		padding: 0.9rem 0.7rem;
-		color: var(--muted);
-		font-size: 0.78rem;
-		text-align: left;
-	}
-
-	.interest-choice-button:hover,
-	.interest-choice-active {
-		border-color: var(--voice);
-		color: var(--text);
-	}
-
-	.interest-fields {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1rem;
-	}
-
-	.interest-form label {
-		display: grid;
-		gap: 0.45rem;
-		color: var(--muted);
-		font-size: 0.78rem;
-	}
-
-	.interest-form label > span {
-		color: var(--text);
-		font-size: 0.78rem;
-	}
-
-	.interest-form input,
-	.interest-form textarea,
-	.interest-form select {
-		width: 100%;
-		border: 1px solid var(--line);
-		border-radius: 0;
-		background: var(--surface);
-		padding: 0.8rem;
-		color: var(--text);
-		outline: none;
-	}
-
-	.interest-form input:focus,
-	.interest-form textarea:focus,
-	.interest-form select:focus {
-		border-color: var(--voice);
-		box-shadow: inset 3px 0 0 var(--voice);
-	}
-
-	.interest-workflow {
-		grid-column: 1 / -1;
-	}
-
-	.interest-consent {
-		display: grid !important;
-		grid-template-columns: auto 1fr;
+		grid-template-columns: 0.45fr 0.65fr 0.9fr;
+		gap: clamp(2rem, 6vw, 6rem);
 		align-items: start;
-		gap: 0.65rem;
-		margin-top: 0.4rem;
-		font-size: 0.72rem !important;
+		padding-block: 4rem 6rem;
 	}
 
-	.interest-consent input {
-		width: auto;
-		margin-top: 0.15rem;
-		accent-color: var(--voice);
-	}
-
-	.interest-honeypot {
-		position: absolute;
-		width: 1px !important;
-		height: 1px;
-		overflow: hidden;
-		clip: rect(0 0 0 0);
-	}
-
-	.interest-result {
+	.boundary-note h2 {
 		margin: 0;
-		font-family: var(--mono);
-		font-size: 0.7rem;
+		font-size: clamp(1.7rem, 3vw, 3rem);
 	}
 
-	.interest-result-success {
-		color: var(--voice);
-	}
-
-	.interest-result-error {
-		color: var(--relay);
-	}
-
-	.interest-submit {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		border: 1px solid var(--voice);
-		background: var(--voice);
-		padding: 1rem 1.1rem;
-		color: #07110e;
-		font-weight: 720;
-	}
-
-	.interest-submit span {
-		font-size: 1.3rem;
-	}
-
-	.policy-section {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 9vw;
-		padding: 5rem 0 7rem;
-	}
-
-	.policy-section h2 {
-		font-size: clamp(2.3rem, 4vw, 4rem);
-	}
-
-	.policy-section > p {
-		align-self: end;
-		max-width: 58ch;
+	.boundary-note > p:last-child {
 		margin: 0;
 		color: var(--muted);
-		font-size: 0.9rem;
-	}
-
-	.site-footer {
-		display: grid;
-		grid-template-columns: auto 1fr auto;
-		gap: 2rem;
-		align-items: center;
-		min-height: 7rem;
-		border-top: 1px solid var(--line);
-	}
-
-	.site-footer p {
-		justify-self: center;
-		margin: 0;
-		color: var(--faint);
-		font-size: 0.72rem;
+		font-size: 0.86rem;
 	}
 
 	@media (max-width: 900px) {
-		.site-header {
-			grid-template-columns: 1fr auto;
-		}
-
-		.site-header nav {
-			display: none;
-		}
-
 		.hero,
-		.handoff-section,
-		.product-switch,
-		.interest-section,
-		.interest-form-section,
-		.policy-section {
+		.product-section,
+		.method,
+		.form-section,
+		.boundary-note {
 			grid-template-columns: 1fr;
-			gap: 3.5rem;
 		}
 
 		.hero {
 			min-height: auto;
-			padding: 4rem 0 6rem;
+			padding-block: 4.5rem 6rem;
 		}
 
-		.hero-visual {
-			order: -1;
+		.handoff-record {
+			width: min(100% - 1rem, 38rem);
 		}
 
-		.handoff-section,
-		.interest-section,
-		.interest-form-section {
-			padding: 6rem 0;
+		.section-heading {
+			position: static;
 		}
 
-		.selected-product {
-			grid-column: auto;
-			margin-top: -2.3rem;
-		}
-
-		.products {
-			grid-template-columns: 1fr;
-			gap: 5rem;
-			padding: 5rem 0 7rem;
-		}
-
-		.product-panel {
-			min-height: 40rem;
-		}
-
-		.policy-section > p {
-			align-self: start;
-		}
-
-		.interest-fields,
-		.interest-choice {
-			grid-template-columns: 1fr;
-		}
-
-		.site-footer {
-			grid-template-columns: 1fr;
-			gap: 1rem;
-			padding: 2rem 0;
-		}
-
-		.site-footer p {
-			justify-self: start;
+		.signal-section {
+			background: transparent;
 		}
 	}
 
 	@media (max-width: 560px) {
-		.header-status {
-			font-size: 0.58rem;
+		.hero {
+			gap: 4rem;
 		}
 
 		.hero h1 {
-			font-size: clamp(3.4rem, 16vw, 5.2rem);
+			font-size: clamp(3.5rem, 18vw, 5.2rem);
 		}
 
-		.hero-actions,
-		.hero-footnote {
+		.hero-links {
 			align-items: flex-start;
 			flex-direction: column;
-			gap: 0.8rem;
+			gap: 1rem;
 		}
 
-		.handoff-steps {
+		.record-row {
 			grid-template-columns: 1fr;
-			gap: 1.3rem;
+			gap: 0.5rem;
 		}
 
-		.handoff-connector {
-			transform: rotate(90deg);
-			justify-self: start;
+		.handoff-record footer {
+			align-items: flex-start;
+			flex-direction: column;
 		}
 
-		.product-panel {
-			min-height: 0;
+		.product-section,
+		.method,
+		.form-section {
+			padding-block: 4.5rem 5.5rem;
+		}
+
+		.method li {
+			grid-template-columns: 2rem 1fr;
+		}
+
+		.method li p {
+			grid-column: 2;
 		}
 	}
 </style>

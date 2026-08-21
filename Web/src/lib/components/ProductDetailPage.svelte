@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
+	import SiteFooter from "$lib/components/SiteFooter.svelte";
+	import SiteHeader from "$lib/components/SiteHeader.svelte";
 	import type { ProductPageDefinition } from "$lib/domain/product-pages";
 
 	interface Props {
@@ -9,45 +11,44 @@
 	let { page }: Props = $props();
 </script>
 
-<header class="detail-header page-shell">
-	<a class="detail-brand" href={resolve("/")}>CodeLoud</a>
-	<nav aria-label="Product navigation">
-		<a href={resolve("/voice")}>Voice</a>
-		<a href={resolve("/relay")}>Relay</a>
-		<a href={resolve("/privacy")}>Privacy</a>
-	</nav>
-	<a class="back-link" href={resolve("/")}>Family overview ↗</a>
-</header>
+<SiteHeader active={page.id} />
 
 <main class={`detail-page detail-${page.id}`}>
 	<section class="detail-hero page-shell">
-		<p class="mono-label">{page.eyebrow}</p>
-		<h1>{page.title}</h1>
-		<p class="detail-promise">{page.promise}</p>
-		{#if page.cta._tag === "external"}
-			<a class="detail-cta" href={page.cta.url} target="_blank" rel="external noopener"
-				>{page.ctaLabel}<span aria-hidden="true">→</span></a
-			>
-		{:else}
-			<a class="detail-cta" href={resolve(page.cta.url)}
-				>{page.ctaLabel}<span aria-hidden="true">→</span></a
-			>
-		{/if}
+		<div>
+			<p class="mono-label">{page.eyebrow}</p>
+			<h1>{page.title}</h1>
+			<p class="detail-promise">{page.promise}</p>
+			{#if page.cta._tag === "external"}
+				<a class="detail-cta" href={page.cta.url} target="_blank" rel="external noopener">
+					{page.ctaLabel}<span aria-hidden="true">↗</span>
+				</a>
+			{:else}
+				<a class="detail-cta" href={resolve(page.cta.url)}>
+					{page.ctaLabel}<span aria-hidden="true">↘</span>
+				</a>
+			{/if}
+		</div>
+		<aside class="detail-stamp" aria-label={`${page.id} product status`}>
+			<span>CODELOUD / {page.id}</span>
+			<strong>{page.id === "voice" ? "INPUT" : "CONTEXT"}</strong>
+			<span>{page.id === "voice" ? "human reviewed" : "evidence attached"}</span>
+		</aside>
 	</section>
 
 	<section class="detail-section page-shell" aria-labelledby="problem-title">
-		<div>
-			<p class="mono-label">The problem</p>
+		<header>
+			<p class="mono-label">01 / The problem</p>
 			<h2 id="problem-title">The edge is where meaning gets lost.</h2>
-		</div>
+		</header>
 		<p class="large-copy">{page.problem}</p>
 	</section>
 
-	<section class="detail-section page-shell" aria-labelledby="workflow-title">
-		<div>
-			<p class="mono-label">The workflow</p>
+	<section class="detail-section workflow-section page-shell" aria-labelledby="workflow-title">
+		<header>
+			<p class="mono-label">02 / The workflow</p>
 			<h2 id="workflow-title">A bounded path from input to evidence.</h2>
-		</div>
+		</header>
 		<ol class="workflow-list">
 			{#each page.workflow as step, index (step)}
 				<li>
@@ -59,127 +60,138 @@
 	</section>
 
 	<section class="capabilities page-shell" aria-label={`${page.id} capabilities`}>
-		{#each page.capabilities as capability (capability.title)}
-			<article>
-				<h2>{capability.title}</h2>
-				<p>{capability.detail}</p>
-			</article>
-		{/each}
+		<header>
+			<p class="mono-label">03 / What it does</p>
+			<h2>Built for the parts that need checking.</h2>
+		</header>
+		<div>
+			{#each page.capabilities as capability, index (capability.title)}
+				<article>
+					<span>{String(index + 1).padStart(2, "0")}</span>
+					<h3>{capability.title}</h3>
+					<p>{capability.detail}</p>
+				</article>
+			{/each}
+		</div>
 	</section>
 
-	<section class="boundary page-shell" aria-labelledby="boundary-title">
+	<aside class="boundary page-shell" aria-labelledby="boundary-title">
 		<p class="mono-label">Honest boundary</p>
 		<h2 id="boundary-title">{page.boundaryTitle}</h2>
 		<p>{page.boundary}</p>
-	</section>
+	</aside>
 </main>
 
-<footer class="detail-footer page-shell">
-	<a href={resolve("/")}>CodeLoud</a>
-	<p>Voice improves what goes in. Relay improves what the agent can work from.</p>
-	<a href={resolve("/privacy")}>Privacy</a>
-</footer>
+<SiteFooter />
 
 <style>
-	.detail-header,
-	.detail-footer {
-		display: grid;
-		grid-template-columns: 1fr auto 1fr;
-		gap: 2rem;
-		align-items: center;
-		min-height: 5.5rem;
-		border-bottom: 1px solid var(--line);
-	}
-
-	.detail-header nav {
-		display: flex;
-		gap: 1.4rem;
-	}
-
-	.detail-header a,
-	.detail-footer a {
-		text-decoration: none;
-	}
-
-	.detail-header nav a,
-	.back-link,
-	.detail-footer {
-		color: var(--muted);
-		font-family: var(--mono);
-		font-size: 0.68rem;
-	}
-
-	.back-link {
-		justify-self: end;
-	}
-
-	.detail-brand {
-		font-size: 1.05rem;
-		font-weight: 800;
-	}
-
 	.detail-hero {
 		display: grid;
-		min-height: 44rem;
-		align-content: center;
-		padding-block: 6rem;
+		grid-template-columns: minmax(0, 1.4fr) minmax(15rem, 0.6fr);
+		gap: clamp(3rem, 8vw, 8rem);
+		align-items: end;
+		min-height: 40rem;
+		padding-block: 6rem 7rem;
 	}
 
 	.detail-hero .mono-label,
 	.detail-section .mono-label,
+	.capabilities .mono-label,
 	.boundary .mono-label {
+		margin: 0;
 		color: var(--accent);
 	}
 
 	.detail-hero h1 {
-		max-width: 13ch;
+		max-width: 11ch;
 		margin: 1.4rem 0 0;
-		font-size: clamp(3.8rem, 8vw, 8.8rem);
-		font-weight: 540;
-		line-height: 0.88;
-		letter-spacing: -0.075em;
+		font-size: clamp(4rem, 8vw, 8.5rem);
+		font-weight: 650;
+		line-height: 0.84;
+		letter-spacing: -0.08em;
+		text-wrap: balance;
 	}
 
 	.detail-promise {
-		max-width: 52ch;
-		margin: 2.4rem 0 0;
+		max-width: 50ch;
+		margin: 2rem 0 0;
 		color: var(--muted);
-		font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+		font-size: clamp(1.05rem, 1.7vw, 1.35rem);
 	}
 
 	.detail-cta {
 		display: flex;
-		width: min(100%, 28rem);
+		width: min(100%, 26rem);
 		justify-content: space-between;
-		margin-top: 3rem;
-		border: 1px solid var(--accent);
-		padding: 1rem;
-		color: var(--accent);
+		margin-top: 2.5rem;
+		border-top: 2px solid var(--text);
+		padding: 0.9rem 0;
+		font-family: var(--mono);
+		font-size: 0.72rem;
 		text-decoration: none;
 	}
 
-	.detail-section {
+	.detail-cta span {
+		color: var(--accent);
+	}
+
+	.detail-stamp {
 		display: grid;
-		grid-template-columns: minmax(14rem, 0.75fr) 1.25fr;
-		gap: 5rem;
-		border-top: 1px solid var(--line);
-		padding-block: 7rem;
+		gap: 1rem;
+		border: 1px solid var(--line-strong);
+		background: var(--paper-raised);
+		padding: 1.4rem;
+		box-shadow: 0.7rem 0.7rem 0 var(--ink-shadow);
+		font-family: var(--mono);
+		text-transform: uppercase;
+		transform: rotate(1.5deg);
+	}
+
+	.detail-stamp span {
+		color: var(--muted);
+		font-size: 0.6rem;
+	}
+
+	.detail-stamp strong {
+		border-block: 2px solid var(--text);
+		padding-block: 1rem;
+		color: var(--accent);
+		font-size: clamp(2.2rem, 4vw, 4rem);
+		letter-spacing: -0.07em;
+	}
+
+	.detail-section,
+	.capabilities,
+	.boundary {
+		border-top: 1px solid var(--line-strong);
+		padding-block: 6rem;
+	}
+
+	.detail-section,
+	.capabilities {
+		display: grid;
+		grid-template-columns: minmax(14rem, 0.65fr) 1.35fr;
+		gap: clamp(3rem, 8vw, 8rem);
 	}
 
 	.detail-section h2,
+	.capabilities header h2,
 	.boundary h2 {
-		max-width: 13ch;
+		max-width: 12ch;
 		margin: 1rem 0 0;
-		font-size: clamp(2rem, 4vw, 4rem);
-		line-height: 1;
-		letter-spacing: -0.055em;
+		font-size: clamp(2.2rem, 4vw, 4.4rem);
+		font-weight: 640;
+		line-height: 0.94;
+		letter-spacing: -0.06em;
+		text-wrap: balance;
 	}
 
 	.large-copy {
-		max-width: 44ch;
+		max-width: 42ch;
 		margin: 0;
 		color: var(--muted);
-		font-size: clamp(1.3rem, 2.2vw, 2rem);
+		font-size: clamp(1.35rem, 2.3vw, 2.1rem);
+		line-height: 1.35;
 	}
 
 	.workflow-list {
@@ -191,85 +203,71 @@
 	.workflow-list li {
 		display: grid;
 		grid-template-columns: 3rem 1fr;
-		border-top: 1px solid var(--line);
-		padding: 1.2rem 0;
+		border-top: 1px solid var(--line-strong);
+		padding: 1.25rem 0;
 	}
 
-	.workflow-list span {
+	.workflow-list span,
+	.capabilities article > span {
 		color: var(--accent);
 		font-family: var(--mono);
-		font-size: 0.68rem;
+		font-size: 0.65rem;
 	}
 
 	.workflow-list p {
+		max-width: 48ch;
 		margin: 0;
 	}
 
-	.capabilities {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		border-top: 1px solid var(--line);
-		border-bottom: 1px solid var(--line);
+	.capabilities > div {
+		border-top: 3px solid var(--text);
 	}
 
 	.capabilities article {
-		min-height: 22rem;
-		border-right: 1px solid var(--line);
-		padding: 2rem;
+		display: grid;
+		grid-template-columns: 3rem minmax(10rem, 0.7fr) 1.3fr;
+		gap: 1.2rem;
+		border-bottom: 1px solid var(--line-strong);
+		padding: 1.5rem 0;
 	}
 
-	.capabilities article:last-child {
-		border-right: 0;
-	}
-
-	.capabilities h2 {
-		max-width: 9ch;
+	.capabilities h3,
+	.capabilities p {
 		margin: 0;
-		font-size: clamp(1.8rem, 3vw, 3rem);
-		line-height: 1;
-		letter-spacing: -0.05em;
+	}
+
+	.capabilities h3 {
+		font-size: 1.15rem;
+		letter-spacing: -0.025em;
 	}
 
 	.capabilities p,
 	.boundary > p:last-child {
-		max-width: 42ch;
-		margin-top: 2rem;
+		max-width: 44ch;
 		color: var(--muted);
 	}
 
 	.boundary {
-		padding-block: 7rem;
+		display: grid;
+		grid-template-columns: 0.4fr 0.65fr 0.95fr;
+		gap: clamp(2rem, 6vw, 6rem);
 	}
 
-	.detail-footer {
-		min-height: 7rem;
-		border-top: 1px solid var(--line);
-		border-bottom: 0;
-	}
-
-	.detail-footer p {
+	.boundary h2,
+	.boundary > p:last-child {
 		margin: 0;
 	}
 
-	.detail-footer a:last-child {
-		justify-self: end;
+	.boundary h2 {
+		font-size: clamp(1.8rem, 3vw, 3.2rem);
 	}
 
-	.detail-voice {
-		--accent: var(--voice);
-	}
-
-	.detail-relay {
-		--accent: var(--relay);
-	}
-
-	@media (max-width: 760px) {
-		.detail-header {
-			grid-template-columns: 1fr auto;
-		}
-
-		.detail-header nav {
-			display: none;
+	@media (max-width: 780px) {
+		.detail-hero,
+		.detail-section,
+		.capabilities,
+		.boundary {
+			grid-template-columns: 1fr;
 		}
 
 		.detail-hero {
@@ -277,29 +275,24 @@
 			padding-block: 5rem;
 		}
 
+		.detail-stamp {
+			width: min(100% - 1rem, 28rem);
+		}
+
 		.detail-section,
-		.capabilities {
-			grid-template-columns: 1fr;
+		.capabilities,
+		.boundary {
+			padding-block: 4.5rem;
 		}
+	}
 
-		.detail-section {
-			gap: 3rem;
-			padding-block: 5rem;
-		}
-
+	@media (max-width: 540px) {
 		.capabilities article {
-			min-height: 16rem;
-			border-right: 0;
-			border-bottom: 1px solid var(--line);
+			grid-template-columns: 2rem 1fr;
 		}
 
-		.detail-footer {
-			grid-template-columns: 1fr;
-			padding-block: 2rem;
-		}
-
-		.detail-footer a:last-child {
-			justify-self: start;
+		.capabilities article p {
+			grid-column: 2;
 		}
 	}
 </style>

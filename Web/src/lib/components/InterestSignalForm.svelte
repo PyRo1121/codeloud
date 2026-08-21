@@ -69,7 +69,7 @@
 				class="cf-turnstile"
 				data-sitekey={siteKey}
 				data-action="codeloud_signal"
-				data-theme="dark"
+				data-theme="light"
 			></div>
 		</div>
 	{:else}
@@ -96,6 +96,11 @@
 		gap: 1rem;
 	}
 
+	.signal-form {
+		border-top: 3px solid var(--text);
+		padding-top: 1rem;
+	}
+
 	.signal-form fieldset {
 		margin: 0;
 		border: 0;
@@ -104,14 +109,14 @@
 
 	.signal-form legend {
 		margin-bottom: 0.9rem;
-		font-size: 0.9rem;
-		font-weight: 700;
+		font-size: 0.86rem;
+		font-weight: 720;
 	}
 
 	.signal-options,
 	.intent-options {
 		display: grid;
-		gap: 0.55rem;
+		gap: 0.5rem;
 	}
 
 	.intent-options {
@@ -133,14 +138,19 @@
 		gap: 1rem;
 		align-items: center;
 		min-height: 3.2rem;
-		border: 1px solid var(--line);
+		border: 1px solid var(--line-strong);
 		padding: 0.75rem 0.9rem;
-		background: rgb(17 21 21 / 76%);
+		background: rgb(255 255 255 / 32%);
 		color: var(--muted);
 		transition:
 			border-color 160ms ease,
 			color 160ms ease,
-			background 160ms ease;
+			background 160ms ease,
+			transform 160ms ease;
+	}
+
+	label:hover span {
+		border-color: var(--text);
 	}
 
 	label span b {
@@ -150,13 +160,17 @@
 	}
 
 	label input:checked + span {
-		border-color: var(--voice);
-		background: rgb(115 224 191 / 8%);
-		color: var(--text);
+		border-color: var(--text);
+		background: var(--text);
+		color: var(--bg);
+	}
+
+	label input:checked + span b {
+		color: var(--accent);
 	}
 
 	label input:focus-visible + span {
-		outline: 2px solid var(--voice);
+		outline: 2px solid var(--accent);
 		outline-offset: 3px;
 	}
 
@@ -169,10 +183,21 @@
 		justify-content: space-between;
 		border: 0;
 		padding: 1rem 1.1rem;
-		background: var(--signal);
-		color: #101313;
+		background: var(--text);
+		color: var(--bg);
 		font-weight: 750;
 		cursor: pointer;
+		transition:
+			background 160ms ease,
+			transform 160ms ease;
+	}
+
+	button:hover:not(:disabled) {
+		background: var(--accent);
+	}
+
+	button:active:not(:disabled) {
+		transform: translateY(1px);
 	}
 
 	button:disabled {
@@ -188,15 +213,15 @@
 	}
 
 	.privacy-note {
-		color: var(--faint);
+		color: var(--muted);
 	}
 
 	.signal-success {
-		color: var(--voice);
+		color: var(--positive);
 	}
 
 	.signal-error {
-		color: #ff9b79;
+		color: var(--accent);
 	}
 
 	.signal-honeypot {

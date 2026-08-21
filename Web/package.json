@@ -21,10 +21,8 @@
 	},
 	"dependencies": {
 		"@effect/schema": "0.75.5",
-		"@threlte/core": "8.5.16",
 		"effect": "3.22.1",
 		"svelte": "5.56.9",
-		"three": "0.185.1",
 		"zod": "4.4.3"
 	},
 	"overrides": {
