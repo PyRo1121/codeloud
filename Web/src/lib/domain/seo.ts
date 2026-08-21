@@ -17,20 +17,67 @@ export function serializeStructuredData(value: JsonValue): string {
 	return JSON.stringify(value).replaceAll("<", "\\u003c");
 }
 
+/** Organization entity for pages that present CodeLoud itself, with a visible breadcrumb trail. */
+export function organizationPageStructuredData(): string {
+	return serializeStructuredData({
+		"@context": "https://schema.org",
+		"@graph": [
+			{ "@id": `${SITE_ORIGIN}/#organization`, ...organizationEntity() },
+			breadcrumbStructuredData([
+				{ name: "CodeLoud", path: "/" },
+				{ name: "About", path: "/about" },
+			]),
+		],
+	});
+}
+
+/** Describe the guides hub and its visible guide list without inventing ratings or dates. */
+export function guidesHubStructuredData(guides: readonly GuideDefinition[]): string {
+	return serializeStructuredData({
+		"@context": "https://schema.org",
+		"@graph": [
+			{
+				"@type": "CollectionPage",
+				"@id": `${SITE_ORIGIN}/guides#collection`,
+				name: "CodeLoud guides",
+				url: `${SITE_ORIGIN}/guides`,
+				inLanguage: "en",
+				publisher: { "@id": `${SITE_ORIGIN}/#organization` },
+			},
+			{
+				"@type": "ItemList",
+				itemListElement: guides.map((guide, index) => ({
+					"@type": "ListItem",
+					position: index + 1,
+					name: guide.title,
+					url: `${SITE_ORIGIN}/guides/${guide.slug}`,
+				})),
+			},
+			breadcrumbStructuredData([
+				{ name: "CodeLoud", path: "/" },
+				{ name: "Guides", path: "/guides" },
+			]),
+		],
+	});
+}
+
+function organizationEntity() {
+	return {
+		"@type": "Organization",
+		name: "CodeLoud",
+		url: `${SITE_ORIGIN}/`,
+		logo: `${SITE_ORIGIN}/favicon.svg`,
+		description:
+			"CodeLoud builds developer tools for reliable coding-agent input and inspectable technical context.",
+	} satisfies Record<string, JsonValue>;
+}
+
 /** Organization and website entities belong on the canonical homepage. */
 export function homepageStructuredData(): string {
 	return serializeStructuredData({
 		"@context": "https://schema.org",
 		"@graph": [
-			{
-				"@type": "Organization",
-				"@id": `${SITE_ORIGIN}/#organization`,
-				name: "CodeLoud",
-				url: `${SITE_ORIGIN}/`,
-				logo: `${SITE_ORIGIN}/favicon.svg`,
-				description:
-					"CodeLoud builds developer tools for reliable coding-agent input and inspectable technical context.",
-			},
+			{ "@id": `${SITE_ORIGIN}/#organization`, ...organizationEntity() },
 			{
 				"@type": "WebSite",
 				"@id": `${SITE_ORIGIN}/#website`,

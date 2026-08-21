@@ -2,7 +2,9 @@
 	import SiteFooter from "$lib/components/SiteFooter.svelte";
 	import SiteHeader from "$lib/components/SiteHeader.svelte";
 	import { GUIDE_LIST } from "$lib/domain/guides";
-	import { SITE_ORIGIN, SOCIAL_IMAGE_URL } from "$lib/domain/seo";
+	import { SITE_ORIGIN, SOCIAL_IMAGE_URL, guidesHubStructuredData } from "$lib/domain/seo";
+
+	const structuredData = guidesHubStructuredData(GUIDE_LIST);
 </script>
 
 <svelte:head>
@@ -33,6 +35,8 @@
 	/>
 	<meta name="twitter:image" content={SOCIAL_IMAGE_URL} />
 	<meta name="twitter:image:alt" content="CodeLoud product family overview" />
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted repository-owned JSON-LD -->
+	{@html '<script type="application/ld+json">' + structuredData + "<" + "/script>"}
 </svelte:head>
 
 <SiteHeader active="guides" />
