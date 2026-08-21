@@ -32,7 +32,7 @@
 		"lint": "npm run lint:web",
 		"build": "npm run build:web",
 		"test": "npm run test:web",
-		"verify:web": "npm run format:web && npm run lint:web && npm run check:web && npm run test:web && npm run build:web"
+		"verify:web": "npm run format:web && npm run lint:web && npm run check:web && npm run test:web && npm run build:web && npm --prefix Web run check:worker"
 	},
 	"allowScripts": {
 		"esbuild": true,
