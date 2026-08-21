@@ -12,7 +12,11 @@ const config = {
 				// Cloudflare Web Analytics auto-injects its versioned RUM beacon on
 				// proxied requests; the beacon reports back to our own /cdn-cgi/rum,
 				// so connect-src 'self' already permits transmission.
-				"script-src": ["'self'", "https://challenges.cloudflare.com", "https://static.cloudflareinsights.com"],
+				"script-src": [
+					"'self'",
+					"https://challenges.cloudflare.com",
+					"https://static.cloudflareinsights.com",
+				],
 				// Svelte transitions create inline <style> elements; SvelteKit
 				// augments generated inline styles/scripts with nonces or hashes.
 				"style-src": ["'self'", "'unsafe-inline'"],
