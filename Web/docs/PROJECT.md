@@ -41,7 +41,8 @@ The hero uses a full-width product-family map rather than a conventional copy-an
    - Voice: speak naturally, review precise code-aware instructions, then send.
    - Relay: ask technical questions, receive exact-version sourced evidence, and inspect it.
 3. One compact audience row: developers first, then teams and tool vendors.
-4. One final early-access action and the footer.
+4. One sourced-guides row linking voice input, context engineering, and MCP documentation.
+5. One final early-access action and the footer.
 
 Product details, boundaries, and expanded capabilities remain on `/voice` and `/relay`.
 

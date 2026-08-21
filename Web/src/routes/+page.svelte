@@ -4,33 +4,42 @@
 	import SiteFooter from "$lib/components/SiteFooter.svelte";
 	import SiteHeader from "$lib/components/SiteHeader.svelte";
 	import { productFor } from "$lib/domain/product-catalog";
+	import { homepageStructuredData } from "$lib/domain/seo";
 
 	const relay = productFor("relay");
+	const structuredData = homepageStructuredData();
 </script>
 
 <svelte:head>
-	<title>CodeLoud | Stop Correcting and Fact-Checking Coding Agents</title>
+	<title>CodeLoud | Voice Dictation and Sourced Context for Coding Agents</title>
 	<meta
 		name="description"
-		content="CodeLoud Voice makes spoken developer intent reviewable. Relay gives coding agents exact-version, sourced technical context."
+		content="CodeLoud Voice turns spoken developer intent into reviewable coding-agent prompts. Relay supplies exact-version documentation and sourced technical context."
 	/>
 	<link rel="canonical" href="https://codeloud.xyz/" />
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content="CodeLoud" />
+	<meta property="og:locale" content="en_US" />
 	<meta property="og:title" content="Say what you mean. Make your agent show its work." />
 	<meta
 		property="og:description"
-		content="Voice fixes the input. Relay verifies the technical context."
+		content="Voice makes coding-agent input reviewable. Relay makes technical context inspectable."
 	/>
 	<meta property="og:url" content="https://codeloud.xyz/" />
 	<meta property="og:image" content="https://codeloud.xyz/og-codeloud.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content="CodeLoud Voice and Relay product family overview" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="Say what you mean. Make your agent show its work." />
 	<meta
 		name="twitter:description"
-		content="Voice fixes the input. Relay verifies the technical context."
+		content="Voice makes coding-agent input reviewable. Relay makes technical context inspectable."
 	/>
 	<meta name="twitter:image" content="https://codeloud.xyz/og-codeloud.png" />
+	<meta name="twitter:image:alt" content="CodeLoud Voice and Relay product family overview" />
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted repository-owned JSON-LD -->
+	{@html '<script type="application/ld+json">' + structuredData + "<" + "/script>"}
 </svelte:head>
 
 <SiteHeader />
@@ -120,6 +129,27 @@
 				<p>Add developer-aware input or sourced context without rebuilding every workflow.</p>
 			</div>
 		</div>
+	</section>
+
+	<section class="home-guides page-shell" aria-labelledby="home-guides-title">
+		<header>
+			<h2 id="home-guides-title">Understand the systems behind reliable coding agents.</h2>
+			<p>Practical guidance, grounded in primary sources and explicit product boundaries.</p>
+		</header>
+		<nav aria-label="CodeLoud guides">
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- canonical static guide URL -->
+			<a href="/guides/voice-coding-agents">
+				<span>Voice input</span><strong>Dictate prompts without losing the code terms</strong>
+			</a>
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- canonical static guide URL -->
+			<a href="/guides/coding-agent-context">
+				<span>Context engineering</span><strong>Give the model less, but make it better</strong>
+			</a>
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- canonical static guide URL -->
+			<a href="/guides/mcp-documentation-servers">
+				<span>MCP</span><strong>What agents need from documentation servers</strong>
+			</a>
+		</nav>
 	</section>
 
 	<section class="closing page-shell" aria-labelledby="closing-title">
@@ -233,6 +263,7 @@
 
 	.products,
 	.audiences,
+	.home-guides,
 	.closing {
 		border-top: 1px solid var(--line);
 	}
@@ -414,6 +445,54 @@
 		font-size: 0.82rem;
 	}
 
+	.home-guides {
+		display: grid;
+		grid-template-columns: minmax(15rem, 0.65fr) minmax(0, 1.35fr);
+		gap: clamp(3rem, 8vw, 8rem);
+		padding-block: 5rem;
+	}
+
+	.home-guides h2 {
+		max-width: 14ch;
+		margin: 0;
+		font-size: clamp(2.2rem, 3.8vw, 3.8rem);
+		font-weight: 630;
+		line-height: 0.98;
+		letter-spacing: -0.055em;
+	}
+
+	.home-guides header p {
+		max-width: 40ch;
+		margin: 1rem 0 0;
+		color: var(--muted);
+	}
+
+	.home-guides nav {
+		display: grid;
+		border-top: 1px solid var(--line);
+	}
+
+	.home-guides a {
+		display: grid;
+		grid-template-columns: 9rem 1fr;
+		gap: 1.5rem;
+		border-bottom: 1px solid var(--line);
+		padding: 1.1rem 0;
+		text-decoration: none;
+	}
+
+	.home-guides a span {
+		color: var(--accent);
+		font-family: var(--mono);
+		font-size: 0.6rem;
+		text-transform: uppercase;
+	}
+
+	.home-guides a strong {
+		font-size: 0.9rem;
+		font-weight: 560;
+	}
+
 	.closing {
 		display: flex;
 		align-items: center;
@@ -449,7 +528,8 @@
 		}
 
 		.product-pair,
-		.audiences {
+		.audiences,
+		.home-guides {
 			grid-template-columns: 1fr;
 		}
 
@@ -457,7 +537,8 @@
 			gap: 3.5rem;
 		}
 
-		.audiences {
+		.audiences,
+		.home-guides {
 			gap: 3.5rem;
 		}
 
@@ -477,7 +558,8 @@
 			grid-template-columns: 2rem 1fr;
 		}
 
-		.audience-secondary > div {
+		.audience-secondary > div,
+		.home-guides a {
 			grid-template-columns: 1fr;
 			gap: 0.6rem;
 		}

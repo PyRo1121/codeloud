@@ -12,7 +12,20 @@ import { chromium } from "playwright-core";
 
 const CHROMIUM_PATH = "/usr/bin/chromium";
 const SITE_URL = process.env.CODELOUD_SITE_URL ?? "https://codeloud.xyz";
+const CANONICAL_ORIGIN = "https://codeloud.xyz";
 const SCREENSHOT_DIR = resolve("scripts", "screenshots");
+const INDEXABLE_PATHS = [
+	"/",
+	"/voice",
+	"/relay",
+	"/guides",
+	"/guides/voice-coding-agents",
+	"/guides/coding-agent-context",
+	"/guides/mcp-documentation-servers",
+	"/about",
+	"/privacy",
+];
+const RESPONSIVE_PATHS = [...INDEXABLE_PATHS, "/early-access", "/signal"];
 
 function isTurnstileNoise(text) {
 	return text.includes("challenges.cloudflare.com") || text.startsWith("%c");
@@ -48,7 +61,7 @@ async function takeScreenshot(page, name) {
 }
 
 async function inspectLayout(page, label) {
-	for (const path of ["/", "/voice", "/relay", "/privacy", "/early-access", "/signal"]) {
+	for (const path of RESPONSIVE_PATHS) {
 		const response = await page.goto(`${SITE_URL}${path}`, { waitUntil: "domcontentloaded" });
 		const layout = await page.evaluate(() => ({
 			hasHeading: Boolean(document.querySelector("h1")),
@@ -80,7 +93,8 @@ try {
 	await desktop.goto(SITE_URL, { waitUntil: "domcontentloaded" });
 
 	const desktopTitle = await desktop.title();
-	if (desktopTitle.includes("Stop Correcting")) pass("Page title states the customer outcome");
+	if (desktopTitle.includes("Voice Dictation") && desktopTitle.includes("Coding Agents"))
+		pass("Page title states the product category");
 	else fail("Page title", desktopTitle);
 
 	const heading = await desktop.locator("h1").textContent();
@@ -120,6 +134,66 @@ try {
 
 	if (consoleErrors.length === 0) pass("No application console errors");
 	else fail("Console errors", consoleErrors.join("; "));
+
+	report("\nIndexable SEO routes:");
+	const seoIssues = [];
+	const titles = new Set();
+	const canonicals = new Set();
+	for (const path of INDEXABLE_PATHS) {
+		const response = await desktop.goto(`${SITE_URL}${path}`, { waitUntil: "domcontentloaded" });
+		const seo = await desktop.evaluate(() => {
+			const structuredData = [...document.querySelectorAll('script[type="application/ld+json"]')];
+			return {
+				title: document.title,
+				description:
+					document.querySelector('meta[name="description"]')?.getAttribute("content") ?? "",
+				canonical: document.querySelector('link[rel="canonical"]')?.getAttribute("href") ?? "",
+				robots: document.querySelector('meta[name="robots"]')?.getAttribute("content") ?? "",
+				h1Count: document.querySelectorAll("h1").length,
+				validStructuredData: structuredData.every((node) => {
+					try {
+						JSON.parse(node.textContent ?? "");
+						return true;
+					} catch {
+						return false;
+					}
+				}),
+			};
+		});
+		if (!response?.ok()) seoIssues.push(`${path}: HTTP ${response?.status() ?? "missing"}`);
+		if (!seo.title) seoIssues.push(`${path}: missing title`);
+		if (seo.description.length < 70 || seo.description.length > 180)
+			seoIssues.push(`${path}: description length ${seo.description.length}`);
+		if (
+			seo.canonical !== `${CANONICAL_ORIGIN}${path}` &&
+			!(path === "/" && seo.canonical === `${CANONICAL_ORIGIN}/`)
+		)
+			seoIssues.push(`${path}: canonical ${seo.canonical}`);
+		if (seo.robots.includes("noindex")) seoIssues.push(`${path}: unexpectedly noindex`);
+		if (seo.h1Count !== 1) seoIssues.push(`${path}: ${seo.h1Count} h1 elements`);
+		if (!seo.validStructuredData) seoIssues.push(`${path}: invalid JSON-LD`);
+		titles.add(seo.title);
+		canonicals.add(seo.canonical);
+	}
+	if (titles.size !== INDEXABLE_PATHS.length) seoIssues.push("duplicate page titles");
+	if (canonicals.size !== INDEXABLE_PATHS.length) seoIssues.push("duplicate canonical URLs");
+	if (seoIssues.length === 0)
+		pass(`${INDEXABLE_PATHS.length} routes have unique, complete SEO metadata`);
+	else fail("Indexable SEO routes", seoIssues.join("; "));
+
+	const sitemap = await desktop.request.get(`${SITE_URL}/sitemap.xml`);
+	const sitemapText = await sitemap.text();
+	const missingSitemapPaths = INDEXABLE_PATHS.filter(
+		(path) => !sitemapText.includes(`<loc>${CANONICAL_ORIGIN}${path}</loc>`),
+	);
+	if (sitemap.ok() && missingSitemapPaths.length === 0)
+		pass("Sitemap contains every indexable route");
+	else fail("Sitemap coverage", missingSitemapPaths.join(", "));
+	if (!sitemapText.includes("/early-access") && !sitemapText.includes("/signal"))
+		pass("Sitemap excludes noindex conversion routes");
+	else fail("Sitemap index hygiene", "Found a noindex conversion route");
+
+	await desktop.goto(SITE_URL, { waitUntil: "domcontentloaded" });
 	await takeScreenshot(desktop, "desktop-full");
 	await desktop.close();
 

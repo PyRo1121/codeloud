@@ -15,6 +15,7 @@
 	/>
 	<meta name="robots" content="noindex,follow" />
 	<link rel="canonical" href="https://codeloud.xyz/signal" />
+	<link rel="preconnect" href="https://challenges.cloudflare.com" />
 	<meta property="og:title" content="Help Shape the CodeLoud Roadmap" />
 	<meta property="og:description" content="Two choices, no account, aggregate-only storage." />
 	<meta property="og:url" content="https://codeloud.xyz/signal" />

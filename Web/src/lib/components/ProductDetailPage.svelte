@@ -39,7 +39,7 @@
 	<section class="detail-section page-shell" aria-labelledby="problem-title">
 		<header>
 			<p class="mono-label">01 / The problem</p>
-			<h2 id="problem-title">The edge is where meaning gets lost.</h2>
+			<h2 id="problem-title">{page.problemTitle}</h2>
 		</header>
 		<p class="large-copy">{page.problem}</p>
 	</section>
@@ -47,7 +47,7 @@
 	<section class="detail-section workflow-section page-shell" aria-labelledby="workflow-title">
 		<header>
 			<p class="mono-label">02 / The workflow</p>
-			<h2 id="workflow-title">A bounded path from input to evidence.</h2>
+			<h2 id="workflow-title">{page.workflowTitle}</h2>
 		</header>
 		<ol class="workflow-list">
 			{#each page.workflow as step, index (step)}
@@ -62,7 +62,7 @@
 	<section class="capabilities page-shell" aria-label={`${page.id} capabilities`}>
 		<header>
 			<p class="mono-label">03 / What it does</p>
-			<h2>Built for the parts that need checking.</h2>
+			<h2>{page.capabilitiesTitle}</h2>
 		</header>
 		<div>
 			{#each page.capabilities as capability, index (capability.title)}
@@ -80,6 +80,37 @@
 		<h2 id="boundary-title">{page.boundaryTitle}</h2>
 		<p>{page.boundary}</p>
 	</aside>
+
+	<section class="product-links page-shell" aria-labelledby="product-links-title">
+		<div>
+			<p class="mono-label">Continue exploring</p>
+			<h2 id="product-links-title">See how the pieces fit.</h2>
+		</div>
+		<nav aria-label="Related CodeLoud pages">
+			{#if page.id === "voice"}
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- canonical static guide URL -->
+				<a href="/guides/voice-coding-agents">
+					<span>Guide</span><strong
+						>Voice coding agents: dictate prompts without losing code terms</strong
+					>
+				</a>
+				<a href={resolve("/relay")}>
+					<span>CodeLoud Relay</span><strong
+						>Add exact-version, sourced context to the workflow</strong
+					>
+				</a>
+			{:else}
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- canonical static guide URL -->
+				<a href="/guides/mcp-documentation-servers">
+					<span>Guide</span><strong>What coding agents need from an MCP documentation server</strong
+					>
+				</a>
+				<a href={resolve("/voice")}>
+					<span>CodeLoud Voice</span><strong>Make spoken developer instructions reviewable</strong>
+				</a>
+			{/if}
+		</nav>
+	</section>
 </main>
 
 <SiteFooter />
@@ -162,7 +193,8 @@
 
 	.detail-section,
 	.capabilities,
-	.boundary {
+	.boundary,
+	.product-links {
 		border-top: 1px solid var(--line-strong);
 		padding-block: 6rem;
 	}
@@ -262,11 +294,58 @@
 		font-size: clamp(1.8rem, 3vw, 3.2rem);
 	}
 
+	.product-links {
+		display: grid;
+		grid-template-columns: minmax(14rem, 0.65fr) 1.35fr;
+		gap: clamp(3rem, 8vw, 8rem);
+	}
+
+	.product-links .mono-label {
+		margin: 0;
+		color: var(--accent);
+	}
+
+	.product-links h2 {
+		max-width: 10ch;
+		margin: 1rem 0 0;
+		font-size: clamp(2rem, 3.5vw, 3.6rem);
+		font-weight: 640;
+		line-height: 0.98;
+		letter-spacing: -0.055em;
+	}
+
+	.product-links nav {
+		display: grid;
+		border-top: 1px solid var(--line-strong);
+	}
+
+	.product-links a {
+		display: grid;
+		gap: 0.7rem;
+		border-bottom: 1px solid var(--line-strong);
+		padding: 1.25rem 0;
+		text-decoration: none;
+	}
+
+	.product-links a span {
+		color: var(--accent);
+		font-family: var(--mono);
+		font-size: 0.6rem;
+		text-transform: uppercase;
+	}
+
+	.product-links a strong {
+		max-width: 36ch;
+		font-size: 1.05rem;
+		font-weight: 560;
+	}
+
 	@media (max-width: 780px) {
 		.detail-hero,
 		.detail-section,
 		.capabilities,
-		.boundary {
+		.boundary,
+		.product-links {
 			grid-template-columns: 1fr;
 		}
 
@@ -275,13 +354,19 @@
 			padding-block: 5rem;
 		}
 
+		.detail-hero h1 {
+			font-size: clamp(3rem, 14vw, 5rem);
+			overflow-wrap: anywhere;
+		}
+
 		.detail-stamp {
 			width: min(100% - 1rem, 28rem);
 		}
 
 		.detail-section,
 		.capabilities,
-		.boundary {
+		.boundary,
+		.product-links {
 			padding-block: 4.5rem;
 		}
 	}

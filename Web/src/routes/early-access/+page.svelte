@@ -22,6 +22,7 @@
 	/>
 	<meta name="robots" content="noindex,follow" />
 	<link rel="canonical" href="https://codeloud.xyz/early-access" />
+	<link rel="preconnect" href="https://challenges.cloudflare.com" />
 	<meta property="og:title" content="Request Early Access | CodeLoud" />
 	<meta property="og:description" content="Tell CodeLoud what you want to test first." />
 	<meta property="og:url" content="https://codeloud.xyz/early-access" />

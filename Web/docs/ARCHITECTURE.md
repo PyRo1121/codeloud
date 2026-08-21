@@ -24,9 +24,9 @@ Sources:
 - SvelteKit Cloudflare adapter: <https://svelte.dev/docs/kit/adapter-cloudflare>
 - Cloudflare SvelteKit guide: <https://developers.cloudflare.com/workers/framework-guides/web-apps/sveltekit/>
 
-### Semantic signature visual
+### Semantic product-family map
 
-The public page expresses the Voice-to-Relay handoff as a semantic HTML record with a CSS-only editorial treatment. The record shows heard, reviewed, and grounded states without canvas, WebGL, or a client-side graphics runtime. Product meaning remains readable without JavaScript, and the page avoids shipping a large decorative dependency to every visitor.
+The homepage explains Voice and Relay through a semantic HTML product-family map with a CSS-only treatment. It contrasts each failure mode with the outcome CodeLoud supplies, without canvas, WebGL, fake application chrome, or a client-side graphics runtime. Product meaning remains readable without JavaScript.
 
 ### UI primitives
 
@@ -120,11 +120,17 @@ Production provisioning (2026-08-17):
 - Turnstile widget `codeloud-interest` (managed mode) restricted to `codeloud.xyz`; site key exposed as the `TURNSTILE_SITE_KEY` var, secret stored as the `TURNSTILE_SECRET` worker secret (and in local-only `.dev.vars`, gitignored).
 - Worker `codeloud-family-site` deployed with the D1 binding, vars, secret, and the `codeloud.xyz` custom-domain route. Verified live: `GET /` returns 200 with the site key and Turnstile script; form POSTs without a valid token fail closed with the unavailable action data; SvelteKit's origin CSRF check rejects header-less cross-site POSTs.
 
+## Search and content architecture
+
+The homepage owns the CodeLoud family intent. `/voice` targets voice dictation for coding agents; `/relay` targets exact-version documentation and sourced context through MCP. `/guides` links three substantial informational guides covering voice coding agents, coding-agent context engineering, and MCP documentation servers. `/about` provides product purpose, authorship context, and public operating principles.
+
+All public marketing and guide routes are SSR-prerendered, canonicalized, internally linked, and listed in `sitemap.xml` with accurate modification dates. `/early-access` and `/signal` remain `noindex,follow` and are excluded from the sitemap. Homepage Organization/WebSite, product SoftwareApplication/BreadcrumbList, and guide TechArticle/BreadcrumbList JSON-LD represent only visible, supported claims. `docs/research/seo-strategy.md` records the evidence and query map.
+
 ## Next slices
 
 1. Full login + API-key verification on the Relay console (requires the sole account holder's credentials); then define the Voice key scopes (`voice:transcribe`, `voice:project-context`, `voice:receipts`) when Voice ships an authenticated service.
-2. Submit `https://codeloud.xyz/sitemap.xml` through Google Search Console and inspect the canonical `/`, `/voice`, `/relay`, and `/privacy` URLs.
-3. Extend the browser inspection (`scripts/browser-inspect.mjs`) as new surfaces land.
+2. Monitor Google Search Console impressions, coverage, and query-to-page alignment after indexing; add content only when recurring queries reveal a distinct user goal.
+3. Extend the browser inspection and sitemap coverage list as new indexable surfaces land.
 
 ## Authenticated console
 

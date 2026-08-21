@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
 
-	type ActivePage = "home" | "voice" | "relay" | "privacy" | "early-access" | "signal";
+	type ActivePage = "home" | "voice" | "relay" | "guides" | "privacy" | "early-access" | "signal";
 
 	interface Props {
 		readonly active?: ActivePage;
@@ -18,7 +18,7 @@
 	<nav aria-label="Primary navigation">
 		<a class={active === "voice" ? "active" : ""} href={resolve("/voice")}>Voice</a>
 		<a class={active === "relay" ? "active" : ""} href={resolve("/relay")}>Relay</a>
-		<a class={active === "privacy" ? "active" : ""} href={resolve("/privacy")}>Privacy</a>
+		<a class={active === "guides" ? "active" : ""} href={resolve("/guides")}>Guides</a>
 	</nav>
 	<a
 		class={`signal-link ${active === "early-access" ? "active" : ""}`}

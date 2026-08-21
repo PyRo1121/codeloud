@@ -13,6 +13,7 @@
 	<link rel="canonical" href="https://codeloud.xyz/privacy" />
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content="CodeLoud" />
+	<meta property="og:locale" content="en_US" />
 	<meta property="og:title" content="Privacy Notice | CodeLoud" />
 	<meta
 		property="og:description"
@@ -20,7 +21,17 @@
 	/>
 	<meta property="og:url" content="https://codeloud.xyz/privacy" />
 	<meta property="og:image" content="https://codeloud.xyz/og-codeloud.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content="CodeLoud Voice and Relay product family overview" />
 	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="Privacy Notice | CodeLoud" />
+	<meta
+		name="twitter:description"
+		content="How CodeLoud handles interest signals, contact information, and verification data."
+	/>
+	<meta name="twitter:image" content="https://codeloud.xyz/og-codeloud.png" />
+	<meta name="twitter:image:alt" content="CodeLoud Voice and Relay product family overview" />
 </svelte:head>
 
 <SiteHeader active="privacy" />

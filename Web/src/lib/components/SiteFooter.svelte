@@ -8,6 +8,8 @@
 	<nav aria-label="Footer navigation">
 		<a href={resolve("/voice")}>Voice</a>
 		<a href={resolve("/relay")}>Relay</a>
+		<a href={resolve("/guides")}>Guides</a>
+		<a href={resolve("/about")}>About</a>
 		<a href={resolve("/early-access")}>Early access</a>
 		<a href={resolve("/signal")}>Shape the roadmap</a>
 		<a href={resolve("/privacy")}>Privacy</a>
